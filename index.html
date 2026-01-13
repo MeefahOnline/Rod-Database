@@ -6,18 +6,22 @@
 <title>Rod Filter</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; }
+#loading { width: 100%; background-color: #eee; margin-bottom: 10px; display: block; }
+#loadingBar { width: 0%; height: 20px; background-color: #4CAF50; text-align: center; color: white; line-height: 20px; }
+
 #filters { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; }
 .filter-column { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 200px; }
-label { font-weight: bold; }
-select { width: 100%; padding: 5px; }
+
+.filter-column label { font-weight: bold; margin-top: 10px; }
+.checkbox-group { display: flex; flex-direction: column; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
+
 table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: fixed; }
 th, td { border: 1px solid #ccc; padding: 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 th { background-color: #f2f2f2; }
-#loading { width: 100%; background-color: #eee; margin-bottom: 10px; display: none; }
-#loadingBar { width: 0%; height: 20px; background-color: #4CAF50; text-align: center; color: white; line-height: 20px; }
 </style>
 </head>
 <body>
+
 <h2>Fishing Rod Filter</h2>
 
 <div id="loading">
@@ -25,21 +29,8 @@ th { background-color: #f2f2f2; }
 </div>
 
 <div id="filters">
-  <div class="filter-column">
-    <label>Brand:</label><select id="filterBrand"><option value="">All</option></select>
-    <label>Type:</label><select id="filterType"><option value="">All</option></select>
-    <label>Reel Type:</label><select id="filterReelType"><option value="">All</option></select>
-    <label>Length:</label><select id="filterLength"><option value="">All</option></select>
-    <label>Joint Type:</label><select id="filterJointType"><option value="">All</option></select>
-    <label>Power:</label><select id="filterPower"><option value="">All</option></select>
-  </div>
-  <div class="filter-column">
-    <label>Action:</label><select id="filterAction"><option value="">All</option></select>
-    <label>Material:</label><select id="filterMaterial"><option value="">All</option></select>
-    <label>Ring:</label><select id="filterRing"><option value="">All</option></select>
-    <label>Reel Seat:</label><select id="filterReelSeat"><option value="">All</option></select>
-    <label>Warranty:</label><select id="filterWarranty"><option value="">All</option></select>
-  </div>
+  <div class="filter-column" id="col1"></div>
+  <div class="filter-column" id="col2"></div>
 </div>
 
 <table id="rodTable">
@@ -52,124 +43,70 @@ th { background-color: #f2f2f2; }
 <script>
 const sheetCSV = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/refs/heads/main/Rod%20CSV.csv";
 
-// Show loading
 const loading = document.getElementById("loading");
 const loadingBar = document.getElementById("loadingBar");
 loading.style.display = "block";
 loadingBar.style.width = "0%";
 
-fetch(sheetCSV)
-  .then(res => {
-    const reader = res.body.getReader();
-    const contentLength = +res.headers.get('Content-Length');
-    let receivedLength = 0;
-    let chunks = [];
+// Define factors and their CSV columns (0-indexed)
+const factors = [
+  { name: "Brand", col: 1 },
+  { name: "Type", col: 3 },
+  { name: "Reel Type", col: 4 },
+  { name: "Length", col: 5 },
+  { name: "Joint Type", col: 6 },
+  { name: "Power", col: 8 },
+  { name: "Action", col: 10 },
+  { name: "Material", col: 11 },
+  { name: "Ring", col: 12 },
+  { name: "Reel Seat", col: 13 },
+  { name: "Warranty", col: 18 }
+];
 
-    return reader.read().then(function processResult(result){
-      if(result.done) return new TextDecoder("utf-8").decode(new Uint8Array(chunks.flat()));
-      chunks.push(result.value);
-      receivedLength += result.value.length;
-      if(contentLength) loadingBar.style.width = Math.floor((receivedLength/contentLength)*100)+"%";
-      return reader.read().then(processResult);
-    });
-  })
+let tableData = [];
+let filtersData = {};
+
+// === Fetch CSV and initialize ===
+fetch(sheetCSV)
+  .then(res => res.text())
   .then(text => {
     loadingBar.style.width = "100%";
     loading.style.display = "none";
 
     const rows = text.trim().split("\n").filter(r => r);
     const headers = rows[0].split(",");
+    tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,"")));
 
-    const tableHeader = document.getElementById("tableHeader");
-    tableHeader.innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
+    // Table header
+    document.getElementById("tableHeader").innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
 
-    const tableBody = document.getElementById("tableBody");
-    const tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,""))); // remove semicolons
-
-    const filters = {
-      Brand: new Set(),
-      Type: new Set(),
-      "Reel Type": new Set(),
-      Length: new Set(),
-      "Joint Type": new Set(),
-      Power: new Set(),
-      Action: new Set(),
-      Material: new Set(),
-      Ring: new Set(),
-      "Reel Seat": new Set(),
-      Warranty: new Set()
-    };
-
-    tableData.forEach(row => {
-      filters.Brand.add(row[1] || "");
-      filters.Type.add(row[3] || "");
-      filters["Reel Type"].add(row[4] || "");
-      filters.Length.add(row[5] || "");
-      filters["Joint Type"].add(row[6] || "");
-      filters.Power.add(row[8] || "");
-      filters.Action.add(row[10] || "");
-      filters.Material.add(row[11] || "");
-      filters.Ring.add(row[12] || "");
-      filters["Reel Seat"].add(row[13] || "");
-      filters.Warranty.add(row[18] || "");
+    // Prepare unique values for checkboxes
+    factors.forEach(f => {
+      filtersData[f.name] = new Set();
+      tableData.forEach(row => {
+        if(row[f.col]) filtersData[f.name].add(row[f.col]);
+      });
     });
 
-    function populateSelect(id, set) {
-      const select = document.getElementById(id);
-      Array.from(set).sort().forEach(val => {
-        if(val) select.innerHTML += `<option value="${val}">${val}</option>`;
+    // Generate checkbox filters
+    const col1 = document.getElementById("col1");
+    const col2 = document.getElementById("col2");
+    factors.forEach((f, i) => {
+      const container = document.createElement("div");
+      container.innerHTML = `<label>${f.name}:</label>`;
+      const group = document.createElement("div");
+      group.className = "checkbox-group";
+      Array.from(filtersData[f.name]).sort().forEach(val => {
+        const id = f.name+"_"+val.replace(/\s+/g,"_");
+        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
       });
-    }
+      container.appendChild(group);
+      (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
+    });
 
-    populateSelect("filterBrand", filters.Brand);
-    populateSelect("filterType", filters.Type);
-    populateSelect("filterReelType", filters["Reel Type"]);
-    populateSelect("filterLength", filters.Length);
-    populateSelect("filterJointType", filters["Joint Type"]);
-    populateSelect("filterPower", filters.Power);
-    populateSelect("filterAction", filters.Action);
-    populateSelect("filterMaterial", filters.Material);
-    populateSelect("filterRing", filters.Ring);
-    populateSelect("filterReelSeat", filters["Reel Seat"]);
-    populateSelect("filterWarranty", filters.Warranty);
-
-    function renderTable() {
-      const vals = {
-        Brand: document.getElementById("filterBrand").value,
-        Type: document.getElementById("filterType").value,
-        "Reel Type": document.getElementById("filterReelType").value,
-        Length: document.getElementById("filterLength").value,
-        "Joint Type": document.getElementById("filterJointType").value,
-        Power: document.getElementById("filterPower").value,
-        Action: document.getElementById("filterAction").value,
-        Material: document.getElementById("filterMaterial").value,
-        Ring: document.getElementById("filterRing").value,
-        "Reel Seat": document.getElementById("filterReelSeat").value,
-        Warranty: document.getElementById("filterWarranty").value
-      };
-
-      tableBody.innerHTML = "";
-      tableData.forEach(row => {
-        if(
-          (!vals.Brand || row[1]===vals.Brand) &&
-          (!vals.Type || row[3]===vals.Type) &&
-          (!vals["Reel Type"] || row[4]===vals["Reel Type"]) &&
-          (!vals.Length || row[5]===vals.Length) &&
-          (!vals["Joint Type"] || row[6]===vals["Joint Type"]) &&
-          (!vals.Power || row[8]===vals.Power) &&
-          (!vals.Action || row[10]===vals.Action) &&
-          (!vals.Material || row[11]===vals.Material) &&
-          (!vals.Ring || row[12]===vals.Ring) &&
-          (!vals["Reel Seat"] || row[13]===vals["Reel Seat"]) &&
-          (!vals.Warranty || row[18]===vals.Warranty)
-        ) {
-          tableBody.innerHTML += "<tr>"+row.map(c => "<td>"+c+"</td>").join("")+"</tr>";
-        }
-      });
-    }
-
-    Object.keys(filters).forEach(f => {
-      document.getElementById("filter"+f.replace(/ /g,"")).addEventListener("change", renderTable);
+    // Add change event listener using delegation
+    document.querySelectorAll(".filter-checkbox").forEach(cb => {
+      cb.addEventListener("change", renderTable);
     });
 
     renderTable();
@@ -180,6 +117,29 @@ fetch(sheetCSV)
     loadingBar.style.backgroundColor = "red";
     loadingBar.textContent = "Failed to load database!";
   });
+
+// === Render table based on checked boxes ===
+function renderTable() {
+  const selected = {};
+  factors.forEach(f => {
+    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
+                        .map(cb => cb.value);
+    selected[f.name] = checked;
+  });
+
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+
+  tableData.forEach(row => {
+    const match = factors.every(f => {
+      if(selected[f.name].length === 0) return true;
+      return selected[f.name].includes(row[f.col]);
+    });
+    if(match) {
+      tbody.innerHTML += "<tr>" + row.map(c => "<td>"+c+"</td>").join("") + "</tr>";
+    }
+  });
+}
 </script>
 </body>
 </html>
