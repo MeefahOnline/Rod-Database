@@ -6,28 +6,40 @@
 <title>Rod Filter</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; }
-label { margin-right: 10px; display: inline-block; margin-bottom: 5px; }
-select { margin-right: 10px; margin-bottom: 10px; }
-table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+#filters { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; }
+.filter-column { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 200px; }
+label { font-weight: bold; }
+select { width: 100%; padding: 5px; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: fixed; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 th { background-color: #f2f2f2; }
+#loading { width: 100%; background-color: #eee; margin-bottom: 10px; display: none; }
+#loadingBar { width: 0%; height: 20px; background-color: #4CAF50; text-align: center; color: white; line-height: 20px; }
 </style>
 </head>
 <body>
 <h2>Fishing Rod Filter</h2>
 
+<div id="loading">
+  <div id="loadingBar">Loading...</div>
+</div>
+
 <div id="filters">
-  <label>Brand: <select id="filterBrand"><option value="">All</option></select></label>
-  <label>Type: <select id="filterType"><option value="">All</option></select></label>
-  <label>Reel Type: <select id="filterReelType"><option value="">All</option></select></label>
-  <label>Length: <select id="filterLength"><option value="">All</option></select></label>
-  <label>Joint Type: <select id="filterJointType"><option value="">All</option></select></label>
-  <label>Power: <select id="filterPower"><option value="">All</option></select></label>
-  <label>Action: <select id="filterAction"><option value="">All</option></select></label>
-  <label>Material: <select id="filterMaterial"><option value="">All</option></select></label>
-  <label>Ring: <select id="filterRing"><option value="">All</option></select></label>
-  <label>Reel Seat: <select id="filterReelSeat"><option value="">All</option></select></label>
-  <label>Warranty: <select id="filterWarranty"><option value="">All</option></select></label>
+  <div class="filter-column">
+    <label>Brand:</label><select id="filterBrand"><option value="">All</option></select>
+    <label>Type:</label><select id="filterType"><option value="">All</option></select>
+    <label>Reel Type:</label><select id="filterReelType"><option value="">All</option></select>
+    <label>Length:</label><select id="filterLength"><option value="">All</option></select>
+    <label>Joint Type:</label><select id="filterJointType"><option value="">All</option></select>
+    <label>Power:</label><select id="filterPower"><option value="">All</option></select>
+  </div>
+  <div class="filter-column">
+    <label>Action:</label><select id="filterAction"><option value="">All</option></select>
+    <label>Material:</label><select id="filterMaterial"><option value="">All</option></select>
+    <label>Ring:</label><select id="filterRing"><option value="">All</option></select>
+    <label>Reel Seat:</label><select id="filterReelSeat"><option value="">All</option></select>
+    <label>Warranty:</label><select id="filterWarranty"><option value="">All</option></select>
+  </div>
 </div>
 
 <table id="rodTable">
@@ -40,17 +52,39 @@ th { background-color: #f2f2f2; }
 <script>
 const sheetCSV = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/refs/heads/main/Rod%20CSV.csv";
 
+// Show loading
+const loading = document.getElementById("loading");
+const loadingBar = document.getElementById("loadingBar");
+loading.style.display = "block";
+loadingBar.style.width = "0%";
+
 fetch(sheetCSV)
-  .then(res => res.text())
-  .then(data => {
-    const rows = data.trim().split("\n").filter(r => r);
+  .then(res => {
+    const reader = res.body.getReader();
+    const contentLength = +res.headers.get('Content-Length');
+    let receivedLength = 0;
+    let chunks = [];
+
+    return reader.read().then(function processResult(result){
+      if(result.done) return new TextDecoder("utf-8").decode(new Uint8Array(chunks.flat()));
+      chunks.push(result.value);
+      receivedLength += result.value.length;
+      if(contentLength) loadingBar.style.width = Math.floor((receivedLength/contentLength)*100)+"%";
+      return reader.read().then(processResult);
+    });
+  })
+  .then(text => {
+    loadingBar.style.width = "100%";
+    loading.style.display = "none";
+
+    const rows = text.trim().split("\n").filter(r => r);
     const headers = rows[0].split(",");
 
     const tableHeader = document.getElementById("tableHeader");
     tableHeader.innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
 
     const tableBody = document.getElementById("tableBody");
-    const tableData = rows.slice(1).map(r => r.split(","));
+    const tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,""))); // remove semicolons
 
     const filters = {
       Brand: new Set(),
@@ -139,8 +173,13 @@ fetch(sheetCSV)
     });
 
     renderTable();
+
   })
-  .catch(err => console.error("Failed to load CSV:", err));
+  .catch(err => {
+    console.error("Failed to load CSV:", err);
+    loadingBar.style.backgroundColor = "red";
+    loadingBar.textContent = "Failed to load database!";
+  });
 </script>
 </body>
 </html>
