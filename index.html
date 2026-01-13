@@ -102,7 +102,6 @@ th {
     background-color: #3498db; 
     color: white; 
 }
-
 </style>
 </head>
 <body>
@@ -126,102 +125,107 @@ th {
 </table>
 
 <script>
-// --- JSON URL ---
-const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
+document.addEventListener("DOMContentLoaded", function() {
+    // JSON URL
+    const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
 
-const loading = document.getElementById("loading");
-const loadingBar = document.getElementById("loadingBar");
-loading.style.display = "block";
-loadingBar.style.width = "0%";
+    const loading = document.getElementById("loading");
+    const loadingBar = document.getElementById("loadingBar");
+    loading.style.display = "block";
+    loadingBar.style.width = "0%";
 
-// Filter factors
-const factors = [
-  { name: "Brand", key: "Brand" },
-  { name: "Type", key: "Type" },
-  { name: "Reel Type", key: "Reel Type" },
-  { name: "Length", key: "Length" },
-  { name: "Joint Type", key: "Joint Type" },
-  { name: "Power", key: "Power" },
-  { name: "Action", key: "Action" },
-  { name: "Material", key: "Material" },
-  { name: "Ring", key: "Ring" },
-  { name: "Reel Seat", key: "Reel Seat" },
-  { name: "Warranty", key: "Warranty" }
-];
+    const factors = [
+        { name: "Brand", key: "Brand" },
+        { name: "Type", key: "Type" },
+        { name: "Reel Type", key: "Reel Type" },
+        { name: "Length", key: "Length" },
+        { name: "Joint Type", key: "Joint Type" },
+        { name: "Power", key: "Power" },
+        { name: "Action", key: "Action" },
+        { name: "Material", key: "Material" },
+        { name: "Ring", key: "Ring" },
+        { name: "Reel Seat", key: "Reel Seat" },
+        { name: "Warranty", key: "Warranty" }
+    ];
 
-let tableData = [];
-let filtersData = {};
+    let tableData = [];
+    let filtersData = {};
 
-fetch(jsonURL)
-  .then(res => res.json())
-  .then(data => {
-    tableData = data;
-    loadingBar.style.width = "100%";
-    loading.style.display = "none";
+    fetch(jsonURL)
+        .then(res => res.json())
+        .then(data => {
+            tableData = data;
+            loadingBar.style.width = "100%";
+            setTimeout(()=> loading.style.display = "none", 300);
 
-    // Table header
-    const tableHeader = document.getElementById("tableHeader");
-    tableHeader.innerHTML = Object.keys(tableData[0] || {}).map(k => "<th>"+k+"</th>").join("");
+            // Table header
+            const tableHeader = document.getElementById("tableHeader");
+            tableHeader.innerHTML = Object.keys(tableData[0] || {}).map(k => "<th>"+k+"</th>").join("");
 
-    // Build filters
-    factors.forEach(f => {
-      filtersData[f.name] = new Set();
-      tableData.forEach(row => {
-        const val = row[f.key]?.trim();
-        if(val && val !== "0") filtersData[f.name].add(val);
-      });
-    });
+            // Build filters
+            factors.forEach(f => {
+                filtersData[f.name] = new Set();
+                tableData.forEach(row => {
+                    const val = row[f.key]?.trim();
+                    if(val && val !== "0") filtersData[f.name].add(val);
+                });
+            });
 
-    // Generate checkboxes
-    const col1 = document.getElementById("col1");
-    const col2 = document.getElementById("col2");
+            // Generate checkboxes
+            const col1 = document.getElementById("col1");
+            const col2 = document.getElementById("col2");
 
-    factors.forEach((f,i) => {
-      const container = document.createElement("div");
-      container.innerHTML = `<label>${f.name}:</label>`;
-      const group = document.createElement("div");
-      group.className = "checkbox-group";
+            factors.forEach((f,i) => {
+                const container = document.createElement("div");
+                container.innerHTML = `<label>${f.name}:</label>`;
+                const group = document.createElement("div");
+                group.className = "checkbox-group";
 
-      Array.from(filtersData[f.name]).sort().forEach(val => {
-        const id = f.name+"_"+val.replace(/\s+/g,"_");
-        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
-      });
+                Array.from(filtersData[f.name]).sort().forEach(val => {
+                    const id = f.name+"_"+val.replace(/\s+/g,"_");
+                    group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
+                });
 
-      container.appendChild(group);
-      (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
-    });
+                container.appendChild(group);
+                (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
+            });
 
-    document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
+            document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
 
-    renderTable();
-  })
-  .catch(err => {
-    console.error("Failed to load JSON:", err);
-    loadingBar.style.backgroundColor = "red";
-    loadingBar.textContent = "Failed to load database!";
-  });
+            renderTable();
+        })
+        .catch(err => {
+            console.error("Failed to load JSON:", err);
+            loadingBar.style.backgroundColor = "red";
+            loadingBar.textContent = "Failed to load database!";
+        });
 
-// --- Render table ---
-function renderTable() {
-  const selected = {};
-  factors.forEach(f => {
-    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
-                        .map(cb => cb.value);
-    selected[f.name] = checked;
-  });
+    function renderTable() {
+        const selected = {};
+        factors.forEach(f => {
+            const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
+                                .map(cb => cb.value);
+            selected[f.name] = checked;
+        });
 
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = "";
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
 
-  tableData.forEach(row => {
-    const match = factors.every(f => {
-      if(selected[f.name].length === 0) return true;
-      return selected[f.name].includes(row[f.key]);
-    });
-    if(match) {
-      tbody.innerHTML += "<tr>" + Object.values(row).map(c => "<td>"+c+"</td>").join("") + "</tr>";
+        tableData.forEach(row => {
+            const match = factors.every(f => {
+                if(selected[f.name].length === 0) return true;
+                return selected[f.name].includes(row[f.key]);
+            });
+            if(match) {
+                tbody.innerHTML += "<tr>" + Object.values(row).map(c => "<td>"+c+"</td>").join("") + "</tr>";
+            }
+        });
     }
-  });
+});
+</script>
+</body>
+</html>
+
 }
 </script>
 </body>
