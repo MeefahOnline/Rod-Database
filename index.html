@@ -13,7 +13,7 @@ body { font-family: Arial, sans-serif; margin: 20px; }
 .filter-column { flex: 1; min-width: 200px; }
 
 .filter-column label { font-weight: bold; display: block; margin-bottom: 5px; margin-top: 10px; }
-.checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
+.checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
 
 table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: auto; }
 th, td { border: 1px solid #ccc; padding: 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -48,6 +48,7 @@ const loadingBar = document.getElementById("loadingBar");
 loading.style.display = "block";
 loadingBar.style.width = "0%";
 
+// Define the 11 filter factors and their CSV column indexes (0-based)
 const factors = [
   { name: "Brand", col: 1 },
   { name: "Type", col: 3 },
@@ -65,6 +66,7 @@ const factors = [
 let tableData = [];
 let filtersData = {};
 
+// === Fetch CSV and initialize table and filters
 fetch(sheetCSV)
   .then(res => res.text())
   .then(text => {
@@ -73,18 +75,25 @@ fetch(sheetCSV)
 
     const rows = text.trim().split("\n").filter(r => r);
     const headers = rows[0].split(",");
-    tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,""))); // remove semicolons
 
+    // Clean CSV: remove leading/trailing semicolons and trim spaces
+    tableData = rows.slice(1).map(r => 
+      r.split(",").map(c => c.trim().replace(/^;|;$/g,""))
+    );
+
+    // Table header
     document.getElementById("tableHeader").innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
 
+    // Build unique values for each filter factor, exclude zeros
     factors.forEach(f => {
       filtersData[f.name] = new Set();
       tableData.forEach(row => {
-        if(row[f.col]) filtersData[f.name].add(row[f.col].trim());
+        const val = row[f.col];
+        if(val && val !== "0") filtersData[f.name].add(val);
       });
     });
 
-    // Generate checkbox filters in two columns
+    // Generate checkboxes in two columns
     const col1 = document.getElementById("col1");
     const col2 = document.getElementById("col2");
 
@@ -95,16 +104,18 @@ fetch(sheetCSV)
       group.className = "checkbox-group";
 
       Array.from(filtersData[f.name]).sort().forEach(val => {
-        const cleanVal = val.replace(/^;|;$/g,""); // remove any semicolons
-        const id = f.name+"_"+cleanVal.replace(/\s+/g,"_");
-        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${cleanVal}" id="${id}"> ${cleanVal}</label>`;
+        const id = f.name+"_"+val.replace(/\s+/g,"_");
+        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
       });
 
       container.appendChild(group);
       (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
     });
 
+    // Add event listeners for filtering
     document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
+
+    // Initial table render
     renderTable();
   })
   .catch(err => {
@@ -113,10 +124,12 @@ fetch(sheetCSV)
     loadingBar.textContent = "Failed to load database!";
   });
 
+// === Render table based on checked checkboxes
 function renderTable() {
   const selected = {};
   factors.forEach(f => {
-    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`)).map(cb => cb.value);
+    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
+                        .map(cb => cb.value);
     selected[f.name] = checked;
   });
 
@@ -136,3 +149,4 @@ function renderTable() {
 </script>
 </body>
 </html>
+
