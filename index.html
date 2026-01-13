@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rod Filter</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background-color: #f2f2f2; }
+label { margin-right: 10px; }
+</style>
+</head>
+<body>
+<h2>Fishing Rod Filter</h2>
+
+<!-- Example filters -->
+<label>Brand:
+  <select id="brandFilter">
+    <option value="">All</option>
+  </select>
+</label>
+
+<label>Action:
+  <select id="actionFilter">
+    <option value="">All</option>
+  </select>
+</label>
+
+<table id="rodTable">
+<thead>
+<tr id="tableHeader"></tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<script>
+const sheetCSV = "https://docs.google.com/spreadsheets/d/e/YOUR_GOOGLE_SHEET_ID/pub?output=csv";
+
+// Fetch CSV
+fetch(sheetCSV)
+  .then(response => response.text())
+  .then(data => {
+    const rows = data.split("\n").filter(r => r.trim() != "");
+    const headers = rows[0].split(",");
+    const tableHeader = document.getElementById("tableHeader");
+    tableHeader.innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
+
+    // Populate filter options
+    const brandSet = new Set();
+    const actionSet = new Set();
+    const tableData = [];
+    for(let i=1;i<rows.length;i++){
+      const cols = rows[i].split(",");
+      tableData.push(cols);
+      brandSet.add(cols[0]); // assuming Brand is column 0
+      actionSet.add(cols[3]); // assuming Action is column 3
+    }
+
+    const brandSelect = document.getElementById("brandFilter");
+    brandSet.forEach(b=> brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
+
+    const actionSelect = document.getElementById("actionFilter");
+    actionSet.forEach(a=> actionSelect.innerHTML += `<option value="${a}">${a}</option>`);
+
+    const tableBody = document.getElementById("tableBody");
+    function renderTable() {
+      const brandVal = brandSelect.value;
+      const actionVal = actionSelect.value;
+      tableBody.innerHTML = "";
+      tableData.forEach(row => {
+        if((!brandVal || row[0]===brandVal) && (!actionVal || row[3]===actionVal)){
+          tableBody.innerHTML += "<tr>"+row.map(c => "<td>"+c+"</td>").join("")+"</tr>";
+        }
+      });
+    }
+
+    brandSelect.addEventListener("change", renderTable);
+    actionSelect.addEventListener("change", renderTable);
+
+    renderTable(); // initial render
+  });
+</script>
+</body>
+</html>
