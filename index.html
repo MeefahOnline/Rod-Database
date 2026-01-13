@@ -10,12 +10,12 @@ body { font-family: Arial, sans-serif; margin: 20px; }
 #loadingBar { width: 0%; height: 20px; background-color: #4CAF50; text-align: center; color: white; line-height: 20px; }
 
 #filters { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; }
-.filter-column { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 200px; }
+.filter-column { flex: 1; min-width: 200px; }
 
-.filter-column label { font-weight: bold; margin-top: 10px; }
-.checkbox-group { display: flex; flex-direction: column; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
+.filter-column label { font-weight: bold; display: block; margin-bottom: 5px; margin-top: 10px; }
+.checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
 
-table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: fixed; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: auto; }
 th, td { border: 1px solid #ccc; padding: 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 th { background-color: #f2f2f2; }
 </style>
@@ -48,7 +48,6 @@ const loadingBar = document.getElementById("loadingBar");
 loading.style.display = "block";
 loadingBar.style.width = "0%";
 
-// Define factors and their CSV columns (0-indexed)
 const factors = [
   { name: "Brand", col: 1 },
   { name: "Type", col: 3 },
@@ -66,7 +65,6 @@ const factors = [
 let tableData = [];
 let filtersData = {};
 
-// === Fetch CSV and initialize ===
 fetch(sheetCSV)
   .then(res => res.text())
   .then(text => {
@@ -75,42 +73,39 @@ fetch(sheetCSV)
 
     const rows = text.trim().split("\n").filter(r => r);
     const headers = rows[0].split(",");
-    tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,"")));
+    tableData = rows.slice(1).map(r => r.split(",").map(c => c.replace(/^;|;$/g,""))); // remove semicolons
 
-    // Table header
     document.getElementById("tableHeader").innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
 
-    // Prepare unique values for checkboxes
     factors.forEach(f => {
       filtersData[f.name] = new Set();
       tableData.forEach(row => {
-        if(row[f.col]) filtersData[f.name].add(row[f.col]);
+        if(row[f.col]) filtersData[f.name].add(row[f.col].trim());
       });
     });
 
-    // Generate checkbox filters
+    // Generate checkbox filters in two columns
     const col1 = document.getElementById("col1");
     const col2 = document.getElementById("col2");
-    factors.forEach((f, i) => {
+
+    factors.forEach((f,i) => {
       const container = document.createElement("div");
       container.innerHTML = `<label>${f.name}:</label>`;
       const group = document.createElement("div");
       group.className = "checkbox-group";
+
       Array.from(filtersData[f.name]).sort().forEach(val => {
-        const id = f.name+"_"+val.replace(/\s+/g,"_");
-        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
+        const cleanVal = val.replace(/^;|;$/g,""); // remove any semicolons
+        const id = f.name+"_"+cleanVal.replace(/\s+/g,"_");
+        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${cleanVal}" id="${id}"> ${cleanVal}</label>`;
       });
+
       container.appendChild(group);
       (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
     });
 
-    // Add change event listener using delegation
-    document.querySelectorAll(".filter-checkbox").forEach(cb => {
-      cb.addEventListener("change", renderTable);
-    });
-
+    document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
     renderTable();
-
   })
   .catch(err => {
     console.error("Failed to load CSV:", err);
@@ -118,12 +113,10 @@ fetch(sheetCSV)
     loadingBar.textContent = "Failed to load database!";
   });
 
-// === Render table based on checked boxes ===
 function renderTable() {
   const selected = {};
   factors.forEach(f => {
-    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
-                        .map(cb => cb.value);
+    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`)).map(cb => cb.value);
     selected[f.name] = checked;
   });
 
