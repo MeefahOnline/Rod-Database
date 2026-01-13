@@ -6,81 +6,141 @@
 <title>Rod Filter</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; }
+label { margin-right: 10px; display: inline-block; margin-bottom: 5px; }
+select { margin-right: 10px; margin-bottom: 10px; }
 table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
 th { background-color: #f2f2f2; }
-label { margin-right: 10px; }
 </style>
 </head>
 <body>
 <h2>Fishing Rod Filter</h2>
 
-<!-- Example filters -->
-<label>Brand:
-  <select id="brandFilter">
-    <option value="">All</option>
-  </select>
-</label>
-
-<label>Action:
-  <select id="actionFilter">
-    <option value="">All</option>
-  </select>
-</label>
+<div id="filters">
+  <label>Brand: <select id="filterBrand"><option value="">All</option></select></label>
+  <label>Type: <select id="filterType"><option value="">All</option></select></label>
+  <label>Reel Type: <select id="filterReelType"><option value="">All</option></select></label>
+  <label>Length: <select id="filterLength"><option value="">All</option></select></label>
+  <label>Joint Type: <select id="filterJointType"><option value="">All</option></select></label>
+  <label>Power: <select id="filterPower"><option value="">All</option></select></label>
+  <label>Action: <select id="filterAction"><option value="">All</option></select></label>
+  <label>Material: <select id="filterMaterial"><option value="">All</option></select></label>
+  <label>Ring: <select id="filterRing"><option value="">All</option></select></label>
+  <label>Reel Seat: <select id="filterReelSeat"><option value="">All</option></select></label>
+  <label>Warranty: <select id="filterWarranty"><option value="">All</option></select></label>
+</div>
 
 <table id="rodTable">
-<thead>
-<tr id="tableHeader"></tr>
-</thead>
-<tbody id="tableBody"></tbody>
+  <thead>
+    <tr id="tableHeader"></tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
 </table>
 
 <script>
 const sheetCSV = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/refs/heads/main/Rod%20CSV.csv";
 
-// Fetch CSV
 fetch(sheetCSV)
-  .then(response => response.text())
+  .then(res => res.text())
   .then(data => {
-    const rows = data.split("\n").filter(r => r.trim() != "");
+    const rows = data.trim().split("\n").filter(r => r);
     const headers = rows[0].split(",");
+
     const tableHeader = document.getElementById("tableHeader");
     tableHeader.innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
 
-    // Populate filter options
-    const brandSet = new Set();
-    const actionSet = new Set();
-    const tableData = [];
-    for(let i=1;i<rows.length;i++){
-      const cols = rows[i].split(",");
-      tableData.push(cols);
-      brandSet.add(cols[0]); // assuming Brand is column 0
-      actionSet.add(cols[3]); // assuming Action is column 3
+    const tableBody = document.getElementById("tableBody");
+    const tableData = rows.slice(1).map(r => r.split(","));
+
+    const filters = {
+      Brand: new Set(),
+      Type: new Set(),
+      "Reel Type": new Set(),
+      Length: new Set(),
+      "Joint Type": new Set(),
+      Power: new Set(),
+      Action: new Set(),
+      Material: new Set(),
+      Ring: new Set(),
+      "Reel Seat": new Set(),
+      Warranty: new Set()
+    };
+
+    tableData.forEach(row => {
+      filters.Brand.add(row[1] || "");
+      filters.Type.add(row[3] || "");
+      filters["Reel Type"].add(row[4] || "");
+      filters.Length.add(row[5] || "");
+      filters["Joint Type"].add(row[6] || "");
+      filters.Power.add(row[8] || "");
+      filters.Action.add(row[10] || "");
+      filters.Material.add(row[11] || "");
+      filters.Ring.add(row[12] || "");
+      filters["Reel Seat"].add(row[13] || "");
+      filters.Warranty.add(row[18] || "");
+    });
+
+    function populateSelect(id, set) {
+      const select = document.getElementById(id);
+      Array.from(set).sort().forEach(val => {
+        if(val) select.innerHTML += `<option value="${val}">${val}</option>`;
+      });
     }
 
-    const brandSelect = document.getElementById("brandFilter");
-    brandSet.forEach(b=> brandSelect.innerHTML += `<option value="${b}">${b}</option>`);
+    populateSelect("filterBrand", filters.Brand);
+    populateSelect("filterType", filters.Type);
+    populateSelect("filterReelType", filters["Reel Type"]);
+    populateSelect("filterLength", filters.Length);
+    populateSelect("filterJointType", filters["Joint Type"]);
+    populateSelect("filterPower", filters.Power);
+    populateSelect("filterAction", filters.Action);
+    populateSelect("filterMaterial", filters.Material);
+    populateSelect("filterRing", filters.Ring);
+    populateSelect("filterReelSeat", filters["Reel Seat"]);
+    populateSelect("filterWarranty", filters.Warranty);
 
-    const actionSelect = document.getElementById("actionFilter");
-    actionSet.forEach(a=> actionSelect.innerHTML += `<option value="${a}">${a}</option>`);
-
-    const tableBody = document.getElementById("tableBody");
     function renderTable() {
-      const brandVal = brandSelect.value;
-      const actionVal = actionSelect.value;
+      const vals = {
+        Brand: document.getElementById("filterBrand").value,
+        Type: document.getElementById("filterType").value,
+        "Reel Type": document.getElementById("filterReelType").value,
+        Length: document.getElementById("filterLength").value,
+        "Joint Type": document.getElementById("filterJointType").value,
+        Power: document.getElementById("filterPower").value,
+        Action: document.getElementById("filterAction").value,
+        Material: document.getElementById("filterMaterial").value,
+        Ring: document.getElementById("filterRing").value,
+        "Reel Seat": document.getElementById("filterReelSeat").value,
+        Warranty: document.getElementById("filterWarranty").value
+      };
+
       tableBody.innerHTML = "";
       tableData.forEach(row => {
-        if((!brandVal || row[0]===brandVal) && (!actionVal || row[3]===actionVal)){
+        if(
+          (!vals.Brand || row[1]===vals.Brand) &&
+          (!vals.Type || row[3]===vals.Type) &&
+          (!vals["Reel Type"] || row[4]===vals["Reel Type"]) &&
+          (!vals.Length || row[5]===vals.Length) &&
+          (!vals["Joint Type"] || row[6]===vals["Joint Type"]) &&
+          (!vals.Power || row[8]===vals.Power) &&
+          (!vals.Action || row[10]===vals.Action) &&
+          (!vals.Material || row[11]===vals.Material) &&
+          (!vals.Ring || row[12]===vals.Ring) &&
+          (!vals["Reel Seat"] || row[13]===vals["Reel Seat"]) &&
+          (!vals.Warranty || row[18]===vals.Warranty)
+        ) {
           tableBody.innerHTML += "<tr>"+row.map(c => "<td>"+c+"</td>").join("")+"</tr>";
         }
       });
     }
 
-    brandSelect.addEventListener("change", renderTable);
-    actionSelect.addEventListener("change", renderTable);
+    Object.keys(filters).forEach(f => {
+      document.getElementById("filter"+f.replace(/ /g,"")).addEventListener("change", renderTable);
+    });
 
-    renderTable(); // initial render
-  });
+    renderTable();
+  })
+  .catch(err => console.error("Failed to load CSV:", err));
 </script>
 </body>
 </html>
