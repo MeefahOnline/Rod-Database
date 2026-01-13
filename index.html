@@ -41,59 +41,54 @@ th { background-color: #f2f2f2; }
 </table>
 
 <script>
-const sheetCSV = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/refs/heads/main/Rod%20CSV.csv";
+// --- URL of your JSON uploaded to GitHub ---
+const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
 
 const loading = document.getElementById("loading");
 const loadingBar = document.getElementById("loadingBar");
 loading.style.display = "block";
 loadingBar.style.width = "0%";
 
-// Define the 11 filter factors and their CSV column indexes (0-based)
+// Filter factors and JSON keys
 const factors = [
-  { name: "Brand", col: 1 },
-  { name: "Type", col: 3 },
-  { name: "Reel Type", col: 4 },
-  { name: "Length", col: 5 },
-  { name: "Joint Type", col: 6 },
-  { name: "Power", col: 8 },
-  { name: "Action", col: 10 },
-  { name: "Material", col: 11 },
-  { name: "Ring", col: 12 },
-  { name: "Reel Seat", col: 13 },
-  { name: "Warranty", col: 18 }
+  { name: "Brand", key: "Brand" },
+  { name: "Type", key: "Type" },
+  { name: "Reel Type", key: "Reel Type" },
+  { name: "Length", key: "Length" },
+  { name: "Joint Type", key: "Joint Type" },
+  { name: "Power", key: "Power" },
+  { name: "Action", key: "Action" },
+  { name: "Material", key: "Material" },
+  { name: "Ring", key: "Ring" },
+  { name: "Reel Seat", key: "Reel Seat" },
+  { name: "Warranty", key: "Warranty" }
 ];
 
 let tableData = [];
 let filtersData = {};
 
-// === Fetch CSV and initialize table and filters
-fetch(sheetCSV)
-  .then(res => res.text())
-  .then(text => {
+// --- Fetch JSON and build filters & table ---
+fetch(jsonURL)
+  .then(res => res.json())
+  .then(data => {
+    tableData = data;
     loadingBar.style.width = "100%";
     loading.style.display = "none";
 
-    const rows = text.trim().split("\n").filter(r => r);
-    const headers = rows[0].split(",");
+    // Build table header dynamically
+    const tableHeader = document.getElementById("tableHeader");
+    tableHeader.innerHTML = Object.keys(tableData[0] || {}).map(k => "<th>"+k+"</th>").join("");
 
-    // Clean CSV: remove leading/trailing semicolons and trim spaces
-    tableData = rows.slice(1).map(r => 
-      r.split(",").map(c => c.trim().replace(/^;|;$/g,""))
-    );
-
-    // Table header
-    document.getElementById("tableHeader").innerHTML = headers.map(h => "<th>"+h+"</th>").join("");
-
-    // Build unique values for each filter factor, exclude zeros
+    // Build unique filter values for checkboxes, exclude zeros
     factors.forEach(f => {
       filtersData[f.name] = new Set();
       tableData.forEach(row => {
-        const val = row[f.col];
+        const val = row[f.key]?.trim();
         if(val && val !== "0") filtersData[f.name].add(val);
       });
     });
 
-    // Generate checkboxes in two columns
+    // Create checkboxes in two columns
     const col1 = document.getElementById("col1");
     const col2 = document.getElementById("col2");
 
@@ -115,16 +110,16 @@ fetch(sheetCSV)
     // Add event listeners for filtering
     document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
 
-    // Initial table render
+    // Initial render
     renderTable();
   })
   .catch(err => {
-    console.error("Failed to load CSV:", err);
+    console.error("Failed to load JSON:", err);
     loadingBar.style.backgroundColor = "red";
     loadingBar.textContent = "Failed to load database!";
   });
 
-// === Render table based on checked checkboxes
+// --- Render table based on selected checkboxes ---
 function renderTable() {
   const selected = {};
   factors.forEach(f => {
@@ -139,10 +134,10 @@ function renderTable() {
   tableData.forEach(row => {
     const match = factors.every(f => {
       if(selected[f.name].length === 0) return true;
-      return selected[f.name].includes(row[f.col]);
+      return selected[f.name].includes(row[f.key]);
     });
     if(match) {
-      tbody.innerHTML += "<tr>" + row.map(c => "<td>"+c+"</td>").join("") + "</tr>";
+      tbody.innerHTML += "<tr>" + Object.values(row).map(c => "<td>"+c+"</td>").join("") + "</tr>";
     }
   });
 }
