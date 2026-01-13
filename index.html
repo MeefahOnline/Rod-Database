@@ -3,110 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rod Selection</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<title>Rod Filter</title>
 <style>
-body { 
-    font-family: 'Roboto', sans-serif; 
-    margin: 0; 
-    padding: 20px; 
-    background-color: #f5f7fa; 
-    color: #333;
-}
+body { font-family: Arial, sans-serif; margin: 20px; }
+#loading { width: 100%; background-color: #eee; margin-bottom: 10px; display: block; }
+#loadingBar { width: 0%; height: 20px; background-color: #4CAF50; text-align: center; color: white; line-height: 20px; }
 
-h2 {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    font-size: 2em;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
+#filters { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; }
+.filter-column { flex: 1; min-width: 200px; }
 
-#loading {
-    width: 100%; 
-    background-color: #ddd; 
-    margin-bottom: 15px; 
-    border-radius: 5px;
-    overflow: hidden;
-}
+.filter-column label { font-weight: bold; display: block; margin-bottom: 5px; margin-top: 10px; }
+.checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
 
-#loadingBar { 
-    width: 0%; 
-    height: 20px; 
-    background-color: #4CAF50; 
-    text-align: center; 
-    color: white; 
-    line-height: 20px; 
-    transition: width 0.3s ease;
-}
-
-#filters { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 20px; 
-    max-width: 1000px; 
-    margin: 0 auto 20px auto;
-}
-
-.filter-column { 
-    flex: 1; 
-    min-width: 200px; 
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
-
-.filter-column label { 
-    font-weight: bold; 
-    display: block; 
-    margin-bottom: 5px; 
-    margin-top: 10px; 
-}
-
-.checkbox-group { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
-    gap: 5px; 
-    max-height: 250px; 
-    overflow-y: auto; 
-    padding: 5px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-table { 
-    border-collapse: collapse; 
-    width: 100%; 
-    margin-top: 10px; 
-    table-layout: auto; 
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
-
-th, td { 
-    border: 1px solid #ccc; 
-    padding: 8px; 
-    text-align: left; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-}
-
-th { 
-    background-color: #3498db; 
-    color: white; 
-}
+table { border-collapse: collapse; width: 100%; margin-top: 10px; table-layout: auto; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+th { background-color: #f2f2f2; }
 </style>
 </head>
 <body>
 
-<h2>Rod Selection</h2>
+<h2>Fishing Rod Filter</h2>
 
 <div id="loading">
   <div id="loadingBar">Loading...</div>
@@ -125,107 +41,105 @@ th {
 </table>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // JSON URL
-    const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
+// --- URL of your JSON uploaded to GitHub ---
+const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
 
-    const loading = document.getElementById("loading");
-    const loadingBar = document.getElementById("loadingBar");
-    loading.style.display = "block";
-    loadingBar.style.width = "0%";
+const loading = document.getElementById("loading");
+const loadingBar = document.getElementById("loadingBar");
+loading.style.display = "block";
+loadingBar.style.width = "0%";
 
-    const factors = [
-        { name: "Brand", key: "Brand" },
-        { name: "Type", key: "Type" },
-        { name: "Reel Type", key: "Reel Type" },
-        { name: "Length", key: "Length" },
-        { name: "Joint Type", key: "Joint Type" },
-        { name: "Power", key: "Power" },
-        { name: "Action", key: "Action" },
-        { name: "Material", key: "Material" },
-        { name: "Ring", key: "Ring" },
-        { name: "Reel Seat", key: "Reel Seat" },
-        { name: "Warranty", key: "Warranty" }
-    ];
+// Filter factors and JSON keys
+const factors = [
+  { name: "Brand", key: "Brand" },
+  { name: "Type", key: "Type" },
+  { name: "Reel Type", key: "Reel Type" },
+  { name: "Length", key: "Length" },
+  { name: "Joint Type", key: "Joint Type" },
+  { name: "Power", key: "Power" },
+  { name: "Action", key: "Action" },
+  { name: "Material", key: "Material" },
+  { name: "Ring", key: "Ring" },
+  { name: "Reel Seat", key: "Reel Seat" },
+  { name: "Warranty", key: "Warranty" }
+];
 
-    let tableData = [];
-    let filtersData = {};
+let tableData = [];
+let filtersData = {};
 
-    fetch(jsonURL)
-        .then(res => res.json())
-        .then(data => {
-            tableData = data;
-            loadingBar.style.width = "100%";
-            setTimeout(()=> loading.style.display = "none", 300);
+// --- Fetch JSON and build filters & table ---
+fetch(jsonURL)
+  .then(res => res.json())
+  .then(data => {
+    tableData = data;
+    loadingBar.style.width = "100%";
+    loading.style.display = "none";
 
-            // Table header
-            const tableHeader = document.getElementById("tableHeader");
-            tableHeader.innerHTML = Object.keys(tableData[0] || {}).map(k => "<th>"+k+"</th>").join("");
+    // Build table header dynamically
+    const tableHeader = document.getElementById("tableHeader");
+    tableHeader.innerHTML = Object.keys(tableData[0] || {}).map(k => "<th>"+k+"</th>").join("");
 
-            // Build filters
-            factors.forEach(f => {
-                filtersData[f.name] = new Set();
-                tableData.forEach(row => {
-                    const val = row[f.key]?.trim();
-                    if(val && val !== "0") filtersData[f.name].add(val);
-                });
-            });
+    // Build unique filter values for checkboxes, exclude zeros
+    factors.forEach(f => {
+      filtersData[f.name] = new Set();
+      tableData.forEach(row => {
+        const val = row[f.key]?.trim();
+        if(val && val !== "0") filtersData[f.name].add(val);
+      });
+    });
 
-            // Generate checkboxes
-            const col1 = document.getElementById("col1");
-            const col2 = document.getElementById("col2");
+    // Create checkboxes in two columns
+    const col1 = document.getElementById("col1");
+    const col2 = document.getElementById("col2");
 
-            factors.forEach((f,i) => {
-                const container = document.createElement("div");
-                container.innerHTML = `<label>${f.name}:</label>`;
-                const group = document.createElement("div");
-                group.className = "checkbox-group";
+    factors.forEach((f,i) => {
+      const container = document.createElement("div");
+      container.innerHTML = `<label>${f.name}:</label>`;
+      const group = document.createElement("div");
+      group.className = "checkbox-group";
 
-                Array.from(filtersData[f.name]).sort().forEach(val => {
-                    const id = f.name+"_"+val.replace(/\s+/g,"_");
-                    group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
-                });
+      Array.from(filtersData[f.name]).sort().forEach(val => {
+        const id = f.name+"_"+val.replace(/\s+/g,"_");
+        group.innerHTML += `<label><input type="checkbox" class="filter-checkbox" data-factor="${f.name}" value="${val}" id="${id}"> ${val}</label>`;
+      });
 
-                container.appendChild(group);
-                (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
-            });
+      container.appendChild(group);
+      (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(container);
+    });
 
-            document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
+    // Add event listeners for filtering
+    document.querySelectorAll(".filter-checkbox").forEach(cb => cb.addEventListener("change", renderTable));
 
-            renderTable();
-        })
-        .catch(err => {
-            console.error("Failed to load JSON:", err);
-            loadingBar.style.backgroundColor = "red";
-            loadingBar.textContent = "Failed to load database!";
-        });
+    // Initial render
+    renderTable();
+  })
+  .catch(err => {
+    console.error("Failed to load JSON:", err);
+    loadingBar.style.backgroundColor = "red";
+    loadingBar.textContent = "Failed to load database!";
+  });
 
-    function renderTable() {
-        const selected = {};
-        factors.forEach(f => {
-            const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
-                                .map(cb => cb.value);
-            selected[f.name] = checked;
-        });
+// --- Render table based on selected checkboxes ---
+function renderTable() {
+  const selected = {};
+  factors.forEach(f => {
+    const checked = Array.from(document.querySelectorAll(`.filter-checkbox[data-factor="${f.name}"]:checked`))
+                        .map(cb => cb.value);
+    selected[f.name] = checked;
+  });
 
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
 
-        tableData.forEach(row => {
-            const match = factors.every(f => {
-                if(selected[f.name].length === 0) return true;
-                return selected[f.name].includes(row[f.key]);
-            });
-            if(match) {
-                tbody.innerHTML += "<tr>" + Object.values(row).map(c => "<td>"+c+"</td>").join("") + "</tr>";
-            }
-        });
+  tableData.forEach(row => {
+    const match = factors.every(f => {
+      if(selected[f.name].length === 0) return true;
+      return selected[f.name].includes(row[f.key]);
+    });
+    if(match) {
+      tbody.innerHTML += "<tr>" + Object.values(row).map(c => "<td>"+c+"</td>").join("") + "</tr>";
     }
-});
-</script>
-</body>
-</html>
-
+  });
 }
 </script>
 </body>
