@@ -232,7 +232,6 @@ let filtersData = {};
 fetch(jsonURL)
 .then(r=>r.json())
 .then(data=>{
-    // Remove sensitive columns
     tableData = data.map(row=>{
         const newRow = {};
         Object.keys(row).forEach((k,i)=>{
@@ -276,13 +275,11 @@ fetch(jsonURL)
     renderTable();
 });
 
-// Clear filters
 function clearFilters(){
     document.querySelectorAll(".filter").forEach(cb=>cb.checked=false);
     renderTable();
 }
 
-// Render table
 function renderTable(){
     document.getElementById("overlay").style.display="flex";
     setTimeout(()=>{
@@ -299,9 +296,11 @@ function renderTable(){
         tableData.forEach(r=>{
             const match = factors.every((f,i)=>{
                 if(!selected[f.name].length) return true;
-                return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
+                const val = r[Object.keys(r)[filterColumns[i]]] ? r[Object.keys(r)[filterColumns[i]]].toString().trim() : '';
+                return selected[f.name].includes(val);
             });
 
+            // Skip rows with all zeros/blanks if no filters are selected
             let allZero = false;
             if(noFilters){
                 allZero = Object.values(r).every(v => !v || v==="0");
@@ -316,7 +315,7 @@ function renderTable(){
     }, 10);
 }
 
-// Auto-collapse filters on load
+// Auto-collapse all filters on load
 window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.filter-box').forEach(box => box.classList.add('collapsed'));
 });
