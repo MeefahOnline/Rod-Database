@@ -28,8 +28,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 .header h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
@@ -50,6 +50,7 @@ body {
     justify-content: flex-end;
     margin-bottom: 10px;
 }
+
 button {
     background: var(--navy-accent);
     color: #fff;
@@ -66,6 +67,7 @@ button {
     overflow: hidden;
     margin-bottom: 8px;
 }
+
 #loadingBar {
     height: 18px;
     width: 0%;
@@ -109,10 +111,6 @@ button {
     cursor: pointer;
 }
 
-.toggle {
-    font-size: 18px;
-}
-
 .filter-box.collapsed {
     height: auto;
 }
@@ -129,37 +127,25 @@ button {
     overflow-y: auto;
 }
 
-.checkbox-group input[type="checkbox"] {
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    border: 2px solid var(--navy-accent);
-    border-radius: 50%;
-    margin-right: 6px;
-}
-.checkbox-group input[type="checkbox"]:checked {
-    background: var(--navy-accent);
-}
-
 .checkbox-group label {
     display: flex;
     align-items: center;
     font-size: 12.5px;
-    cursor: pointer;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border-radius: 12px;
 }
+
 th, td {
     padding: 8px 10px;
     font-size: 13px;
     border-bottom: 1px solid var(--border-soft);
     white-space: nowrap;
 }
+
 th {
     background: var(--navy-light);
     color: var(--navy);
@@ -212,62 +198,72 @@ th {
 <script>
 const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
 
-// REMOVED columns (0-based)
-const removedColumns = [14, 15, 16, 17, 19, 20];
-
-// FILTER DEFINITIONS (RENUNMBERED)
+/* SAME AS ORIGINAL */
 const factors = [
-  { name: "Brand", col: 1 },
-  { name: "Type", col: 3 },
-  { name: "Reel Type", col: 4 },
-  { name: "Length", col: 5 },
-  { name: "Joint Type", col: 6 },
-  { name: "Power", col: 8 },
-  { name: "Action", col: 10 },
-  { name: "Material", col: 11 },
-  { name: "Ring", col: 12 },
-  { name: "Reel Seat", col: 13 }
+  { name: "Brand" },
+  { name: "Type" },
+  { name: "Reel Type" },
+  { name: "Length" },
+  { name: "Joint Type" },
+  { name: "Power" },
+  { name: "Action" },
+  { name: "Material" },
+  { name: "Ring" },
+  { name: "Reel Seat" },
+  { name: "Warranty" }
 ];
 
+const filterColumns = [1,3,4,5,6,8,10,11,12,13,18];
+
+/* ONLY CHANGE */
+const hiddenColumns = [14,15,16,17,19,20];
+
 let tableData = [];
-let visibleKeys = [];
+let filtersData = {};
 
 fetch(jsonURL)
 .then(r => r.json())
 .then(data => {
     tableData = data;
-    visibleKeys = Object.keys(data[0]).filter((_, i) => !removedColumns.includes(i));
-
-    tableHeader.innerHTML = visibleKeys.map(h => <th>${h}</th>).join("");
     loadingBar.style.width = "100%";
     document.getElementById("loading").style.display = "none";
 
-    factors.forEach((f, i) => {
-        const values = [...new Set(data.map(r => r[Object.keys(r)[f.col]]).filter(v => v && v !== "0"))].sort();
+    tableHeader.innerHTML = Object.keys(data[0])
+        .map((h,i) => hiddenColumns.includes(i) ? "" : <th>${h}</th>)
+        .join("");
 
+    factors.forEach((f,i) => {
+        filtersData[f.name] = new Set();
+        data.forEach(r => {
+            const v = r[Object.keys(r)[filterColumns[i]]];
+            if (v && v !== "0") filtersData[f.name].add(v.toString().trim());
+        });
+    });
+
+    factors.forEach((f,i) => {
         const box = document.createElement("div");
         box.className = "filter-box collapsed";
         box.innerHTML = `
             <div class="filter-header">
                 <span>${f.name}</span>
-                <span class="toggle">▾</span>
+                <span>▾</span>
             </div>
         `;
 
         const group = document.createElement("div");
         group.className = "checkbox-group";
 
-        values.forEach(v => {
+        [...filtersData[f.name]].sort().forEach(v => {
             group.innerHTML += `
             <label>
-                <input type="checkbox" class="filter" data-col="${f.col}" value="${v}">
+                <input type="checkbox" class="filter" data-factor="${f.name}" value="${v}">
                 ${v}
             </label>`;
         });
 
         box.appendChild(group);
         box.querySelector(".filter-header").onclick = () => box.classList.toggle("collapsed");
-        (i < factors.length / 2 ? col1 : col2).appendChild(box);
+        (i < Math.ceil(factors.length/2) ? col1 : col2).appendChild(box);
     });
 
     document.querySelectorAll(".filter").forEach(cb => cb.onchange = renderTable);
@@ -281,25 +277,26 @@ function clearFilters() {
 
 function renderTable() {
     overlay.style.display = "flex";
+
     setTimeout(() => {
         const selected = {};
-        document.querySelectorAll(".filter:checked").forEach(cb => {
-            selected[cb.dataset.col] = selected[cb.dataset.col] || [];
-            selected[cb.dataset.col].push(cb.value);
+        factors.forEach(f => {
+            selected[f.name] = [...document.querySelectorAll(.filter[data-factor="${f.name}"]:checked)]
+                .map(c => c.value);
         });
 
         tableBody.innerHTML = "";
 
         tableData.forEach(r => {
-            const match = Object.entries(selected).every(
-                ([col, vals]) => vals.includes(r[Object.keys(r)[col]])
-            );
+            const match = factors.every((f,i) => {
+                if (!selected[f.name].length) return true;
+                return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
+            });
 
             if (match) {
                 tableBody.innerHTML += `<tr>${
                     Object.values(r)
-                        .filter((_, i) => !removedColumns.includes(i))
-                        .map(v => <td>${v}</td>)
+                        .map((v,i) => hiddenColumns.includes(i) ? "" : <td>${v}</td>)
                         .join("")
                 }</tr>`;
             }
