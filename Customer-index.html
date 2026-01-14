@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rod Selection - Customer</title>
+<title>Rod Selection</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
@@ -33,17 +33,17 @@ body {
 .header h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
-    font-weight: 600;
-    color: #ffffff;
+    color: #fff;
     margin: 0;
 }
 
 .logo {
     height: 80px;
-    object-fit: contain;
 }
 
-.page { padding: 20px; }
+.page {
+    padding: 20px;
+}
 
 .controls {
     display: flex;
@@ -59,7 +59,6 @@ button {
     font-size: 13px;
     cursor: pointer;
 }
-button:hover { opacity: 0.9; }
 
 #loading {
     background: var(--navy-light);
@@ -71,14 +70,23 @@ button:hover { opacity: 0.9; }
     height: 18px;
     width: 0%;
     background: var(--navy-accent);
-    font-size: 11px;
     color: white;
+    font-size: 11px;
     text-align: center;
     line-height: 18px;
 }
 
-#filters { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
-.filter-column { display: grid; gap: 14px; }
+#filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.filter-column {
+    display: grid;
+    gap: 14px;
+}
 
 .filter-box {
     background: white;
@@ -101,11 +109,16 @@ button:hover { opacity: 0.9; }
     cursor: pointer;
 }
 
-.toggle { font-size: 18px; transition: transform 0.2s ease; }
+.toggle {
+    font-size: 18px;
+}
 
-.filter-box.collapsed { height: auto; }
-.filter-box.collapsed .checkbox-group { display: none; }
-.filter-box.collapsed .toggle { transform: rotate(-90deg); }
+.filter-box.collapsed {
+    height: auto;
+}
+.filter-box.collapsed .checkbox-group {
+    display: none;
+}
 
 .checkbox-group {
     flex: 1;
@@ -127,33 +140,30 @@ button:hover { opacity: 0.9; }
 .checkbox-group input[type="checkbox"]:checked {
     background: var(--navy-accent);
 }
-.checkbox-group input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: white;
-    border-radius: 50%;
-    top: 4px;
-    left: 4px;
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-size: 12.5px;
+    cursor: pointer;
 }
-
-.checkbox-group label { display: flex; align-items: center; font-size: 12.5px; cursor: pointer; }
-
-.checkbox-group::-webkit-scrollbar { width: 8px; }
-.checkbox-group::-webkit-scrollbar-thumb { background: var(--navy-accent); border-radius: 6px; }
-.checkbox-group::-webkit-scrollbar-track { background: #f0f3f9; }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
 }
-th, td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
-th { background: var(--navy-light); color: var(--navy); }
+th, td {
+    padding: 8px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+}
+th {
+    background: var(--navy-light);
+    color: var(--navy);
+}
 
 #overlay {
     position: fixed;
@@ -167,20 +177,14 @@ th { background: var(--navy-light); color: var(--navy); }
     color: var(--navy);
     z-index: 999;
 }
-
-@media (max-width: 900px) {
-    .header h2 { font-size: 28px; }
-    .logo { height: 60px; }
-    #filters { grid-template-columns: 1fr; }
-    .checkbox-group { grid-template-columns: 1fr; }
-}
 </style>
 </head>
+
 <body>
 
 <div class="header">
     <h2>Rod Selection</h2>
-    <img src="https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Company%20Logo.jpg" class="logo" alt="Company Logo">
+    <img src="https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Company%20Logo.jpg" class="logo">
 </div>
 
 <div class="page">
@@ -202,123 +206,109 @@ th { background: var(--navy-light); color: var(--navy); }
 </table>
 
 </div>
+
 <div id="overlay">Filtering...</div>
 
 <script>
 const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json";
 
-// Columns 0-based to REMOVE: Price, Discount, Cr, GV, After Discount, Final Price
-const removeCols = [15,16,17,18,20,21];
+// REMOVED columns (0-based)
+const removedColumns = [14, 15, 16, 17, 19, 20];
 
+// FILTER DEFINITIONS (RENUNMBERED)
 const factors = [
-  { name: "Brand" },
-  { name: "Type" },
-  { name: "Reel Type" },
-  { name: "Length" },
-  { name: "Joint Type" },
-  { name: "Power" },
-  { name: "Action" },
-  { name: "Material" },
-  { name: "Ring" },
-  { name: "Reel Seat" },
-  { name: "Warranty" }
+  { name: "Brand", col: 1 },
+  { name: "Type", col: 3 },
+  { name: "Reel Type", col: 4 },
+  { name: "Length", col: 5 },
+  { name: "Joint Type", col: 6 },
+  { name: "Power", col: 8 },
+  { name: "Action", col: 10 },
+  { name: "Material", col: 11 },
+  { name: "Ring", col: 12 },
+  { name: "Reel Seat", col: 13 }
 ];
 
-const filterColumns = [1,3,4,5,6,8,10,11,12,13,18];
-
 let tableData = [];
-let filtersData = {};
+let visibleKeys = [];
 
 fetch(jsonURL)
-.then(r=>r.json())
-.then(data=>{
-    tableData = data.map(row=>{
-        const newRow = {};
-        Object.keys(row).forEach((k,i)=>{
-            if(!removeCols.includes(i)) newRow[k]=row[k];
-        });
-        return newRow;
-    });
+.then(r => r.json())
+.then(data => {
+    tableData = data;
+    visibleKeys = Object.keys(data[0]).filter((_, i) => !removedColumns.includes(i));
 
-    loadingBar.style.width="100%";
-    document.getElementById("loading").style.display="none";
+    tableHeader.innerHTML = visibleKeys.map(h => <th>${h}</th>).join("");
+    loadingBar.style.width = "100%";
+    document.getElementById("loading").style.display = "none";
 
-    const keys = Object.keys(tableData[0]);
-    document.getElementById("tableHeader").innerHTML = keys.map(h=>`<th>${h}</th>`).join("");
+    factors.forEach((f, i) => {
+        const values = [...new Set(data.map(r => r[Object.keys(r)[f.col]]).filter(v => v && v !== "0"))].sort();
 
-    factors.forEach((f,i)=>{
-        filtersData[f.name] = new Set();
-        data.forEach(r=>{
-            const v = r[Object.keys(r)[filterColumns[i]]];
-            if(v && v!=="0") filtersData[f.name].add(v.toString().trim());
-        });
-    });
-
-    factors.forEach((f,i)=>{
         const box = document.createElement("div");
-        box.className="filter-box collapsed";
-        box.innerHTML = `<div class="filter-header"><span>${f.name}</span><span class="toggle">▾</span></div>`;
-        const group = document.createElement("div");
-        group.className="checkbox-group";
+        box.className = "filter-box collapsed";
+        box.innerHTML = `
+            <div class="filter-header">
+                <span>${f.name}</span>
+                <span class="toggle">▾</span>
+            </div>
+        `;
 
-        [...filtersData[f.name]].sort().forEach(v=>{
-            group.innerHTML += `<label><input type="checkbox" class="filter" data-factor="${f.name}" value="${v}"> ${v}</label>`;
+        const group = document.createElement("div");
+        group.className = "checkbox-group";
+
+        values.forEach(v => {
+            group.innerHTML += `
+            <label>
+                <input type="checkbox" class="filter" data-col="${f.col}" value="${v}">
+                ${v}
+            </label>`;
         });
 
         box.appendChild(group);
-        box.querySelector(".filter-header").addEventListener("click",()=>box.classList.toggle("collapsed"));
-
-        (i<Math.ceil(factors.length/2)?document.getElementById("col1"):document.getElementById("col2")).appendChild(box);
+        box.querySelector(".filter-header").onclick = () => box.classList.toggle("collapsed");
+        (i < factors.length / 2 ? col1 : col2).appendChild(box);
     });
 
-    document.querySelectorAll(".filter").forEach(cb=>cb.addEventListener("change", renderTable));
+    document.querySelectorAll(".filter").forEach(cb => cb.onchange = renderTable);
     renderTable();
 });
 
-function clearFilters(){
-    document.querySelectorAll(".filter").forEach(cb=>cb.checked=false);
+function clearFilters() {
+    document.querySelectorAll(".filter").forEach(cb => cb.checked = false);
     renderTable();
 }
 
-function renderTable(){
-    document.getElementById("overlay").style.display="flex";
-    setTimeout(()=>{
+function renderTable() {
+    overlay.style.display = "flex";
+    setTimeout(() => {
         const selected = {};
-        factors.forEach(f=>{
-            selected[f.name] = [...document.querySelectorAll(`.filter[data-factor="${f.name}"]:checked`)].map(c=>c.value);
+        document.querySelectorAll(".filter:checked").forEach(cb => {
+            selected[cb.dataset.col] = selected[cb.dataset.col] || [];
+            selected[cb.dataset.col].push(cb.value);
         });
 
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
+        tableBody.innerHTML = "";
 
-        const noFilters = factors.every(f=>!selected[f.name].length);
+        tableData.forEach(r => {
+            const match = Object.entries(selected).every(
+                ([col, vals]) => vals.includes(r[Object.keys(r)[col]])
+            );
 
-        tableData.forEach(r=>{
-            const match = factors.every((f,i)=>{
-                if(!selected[f.name].length) return true;
-                const val = r[Object.keys(r)[filterColumns[i]]] ? r[Object.keys(r)[filterColumns[i]]].toString().trim() : '';
-                return selected[f.name].includes(val);
-            });
-
-            // Skip rows with all zeros/blanks if no filters are selected
-            let allZero = false;
-            if(noFilters){
-                allZero = Object.values(r).every(v => !v || v==="0");
-            }
-
-            if(match && !allZero){
-                tbody.innerHTML += `<tr>${Object.values(r).map(c=>`<td>${c}</td>`).join("")}</tr>`;
+            if (match) {
+                tableBody.innerHTML += `<tr>${
+                    Object.values(r)
+                        .filter((_, i) => !removedColumns.includes(i))
+                        .map(v => <td>${v}</td>)
+                        .join("")
+                }</tr>`;
             }
         });
 
-        document.getElementById("overlay").style.display="none";
+        overlay.style.display = "none";
     }, 10);
 }
-
-// Auto-collapse all filters on load
-window.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.filter-box').forEach(box => box.classList.add('collapsed'));
-});
 </script>
+
 </body>
 </html>
