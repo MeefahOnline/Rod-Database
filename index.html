@@ -23,7 +23,7 @@ body {
     color: #1a1a1a;
 }
 
-/* ===== HEADER ===== */
+/* Header */
 .header {
     background: linear-gradient(90deg, var(--navy), #102a4d);
     padding: 20px 28px;
@@ -32,20 +32,15 @@ body {
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
 .header h2 {
     font-family: 'Poppins', sans-serif;
     font-size: 34px;
     font-weight: 600;
     color: #ffffff;
     margin: 0;
-    letter-spacing: 0.5px;
 }
-
-/* Logo */
 .logo {
-    height: 80px;           /* MUCH BIGGER */
-    max-height: 90px;
+    height: 80px;
     object-fit: contain;
 }
 
@@ -96,15 +91,6 @@ button:hover { opacity: 0.9; }
     margin-bottom: 18px;
 }
 
-/* Sticky filters (desktop only) */
-@media (min-width: 901px) {
-    #filters {
-        position: sticky;
-        top: 20px;
-        z-index: 50;
-    }
-}
-
 /* Filter Column */
 .filter-column {
     display: grid;
@@ -119,9 +105,10 @@ button:hover { opacity: 0.9; }
     display: flex;
     flex-direction: column;
     height: 190px;
+    overflow: hidden;
 }
 
-/* Expandable Header */
+/* Filter Header */
 .filter-header {
     display: flex;
     justify-content: space-between;
@@ -129,17 +116,23 @@ button:hover { opacity: 0.9; }
     padding: 10px 12px;
     font-weight: 600;
     color: var(--navy);
-    cursor: pointer;
     border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
 }
 
-.filter-header::after {
-    content: "▾";
-    font-size: 16px;
+.toggle {
+    font-size: 18px;
     transition: transform 0.2s ease;
 }
 
-.filter-box.collapsed .filter-header::after {
+/* Collapsed state */
+.filter-box.collapsed .checkbox-group {
+    display: none;
+}
+.filter-box.collapsed {
+    height: auto;
+}
+.filter-box.collapsed .toggle {
     transform: rotate(-90deg);
 }
 
@@ -153,12 +146,7 @@ button:hover { opacity: 0.9; }
     overflow-y: auto;
 }
 
-/* Collapse */
-.filter-box.collapsed .checkbox-group {
-    display: none;
-}
-
-/* Circular Checkbox */
+/* Circular checkbox */
 .checkbox-group input[type="checkbox"] {
     appearance: none;
     width: 15px;
@@ -181,7 +169,7 @@ button:hover { opacity: 0.9; }
     left: 4px;
 }
 
-/* Checkbox Label */
+/* Checkbox label */
 .checkbox-group label {
     display: flex;
     align-items: center;
@@ -237,19 +225,10 @@ th {
 
 /* Mobile */
 @media (max-width: 900px) {
-    .header h2 {
-        font-size: 26px;
-    }
-    .logo {
-        height: 60px;
-    }
-    #filters {
-        grid-template-columns: 1fr;
-        position: static;
-    }
-    .checkbox-group {
-        grid-template-columns: 1fr;
-    }
+    .header h2 { font-size: 26px; }
+    .logo { height: 60px; }
+    #filters { grid-template-columns: 1fr; }
+    .checkbox-group { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -314,7 +293,7 @@ fetch(jsonURL)
     loadingBar.style.width="100%";
     document.getElementById("loading").style.display="none";
 
-    tableHeader.innerHTML=Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
+    tableHeader.innerHTML = Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
 
     factors.forEach((f,i)=>{
         filtersData[f.name]=new Set();
@@ -327,7 +306,14 @@ fetch(jsonURL)
     factors.forEach((f,i)=>{
         const box=document.createElement("div");
         box.className="filter-box";
-        box.innerHTML=`<div class="filter-header">${f.name}</div>`;
+
+        box.innerHTML = `
+            <div class="filter-header">
+                <span>${f.name}</span>
+                <span class="toggle">▾</span>
+            </div>
+        `;
+
         const group=document.createElement("div");
         group.className="checkbox-group";
 
@@ -340,7 +326,11 @@ fetch(jsonURL)
         });
 
         box.appendChild(group);
-        box.querySelector(".filter-header").onclick=()=>box.classList.toggle("collapsed");
+
+        box.querySelector(".filter-header").addEventListener("click",()=>{
+            box.classList.toggle("collapsed");
+        });
+
         (i<Math.ceil(factors.length/2)?col1:col2).appendChild(box);
     });
 
