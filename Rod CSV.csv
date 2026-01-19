@@ -287,7 +287,7 @@
 713516,Penn,Wrath II Boat Squid,Travel (Squid),Spinning,7',3PCS,50 - 150 G,0,50 - 150G,Moderate,(Comp),Titanium,Normal,RM149,,,RM 10,0,RM 149,RM 139
 824144,Rapala,Trail Blazer,Travel (Casting),Spinning,"7'3""",4PCS,10 - 30 LB,Heavy,60G Max,Fast,Carbon,Fuji,Fuji,RM680,RM 50,,RM 30,0,RM 630,RM 600
 263216,Eupro,Blue Heron,Travel (Jigging/Btm),Spinning,7'6,4PCS,2 - 4 PE,Medium,28 - 90G,Fast,(Comp),Normal,Fuji,RM425,RM 40,,,0,RM 385,RM 385
-150,Viper,Ranger,Single Hand (Casting),BC,6',2PCS,8 - 20 PE,Medium Heavy,6 - 30G,Fast,(Comp),Normal,Normal,RM150,,,RM 10,0,RM 150,RM 140
+150,Viper,Ranger,Single Hand (Casting),BC,6',2PCS,8 - 20 LB,Medium Heavy,6 - 30G,Fast,(Comp),Normal,Normal,RM150,,,RM 10,0,RM 150,RM 140
 824131,Rapala,Countdown Finesse Casting,Travel (Casting),BC,"6'6""",4PCS,3 - 8 LB,Ultra Light,1/8 - 3/8OZ,Moderate - Fast,Carbon,Fuji,Aluminium,RM725,,,RM 30,0,RM 725,RM 695
 103623,Seahawk,Journey Travel,Travel (Casting),BC,"5'10""",4PCS,8 - 20 LB,Medium Heavy,9 - 25G,Fast,(Comp),Fuji,Normal,RM180,,,RM 20,0,RM 180,RM 160
 103622,Seahawk,Journey Travel,Travel (Casting),BC,"5'10""",4PCS,6 - 14 LB,Medium,7 - 18G,Fast,(Comp),Fuji,Normal,RM180,,,RM 20,0,RM 180,RM 160
@@ -324,19 +324,19 @@
 113643,Daiwa,25' Crossfire - X,Casting,BC,"6'6""",2PCS,10 - 20 LB,Medium Heavy,7 - 28G,Fast,Graphite,Titanium,Stainless Steel,RM125,,,RM 10,0,RM 125,RM 115
 393517,Lemax,Raptor - X,Casting,BC,6'3,2PCS,10 - 20 LB,Medium Heavy,12 - 25G,Fast,(Comp),SiC,Normal,RM105,,,RM 10,0,RM 105,RM 95
 263480,Eupro,Madness XDR,Casting,BC,"6'6""",2PCS,8 - 15 LB,Medium Light,9 - 20G,Moderate - Fast,Graphite,Normal,Normal,RM130,,,RM 10,0,RM 130,RM 120
-843109,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,2 - 6 PE,Ultra Light,2 - 6G,Slow - Moderate,Carbon,Normal,Normal,RM125,,,RM 10,0,RM 125,RM 115
-813024,Viper,Tanto,Single Hand (Casting),BC,"5'2""",1PCS,5 - 14 PE,Medium Light,1/10 - 3/7OZ,Fast,Graphite,Normal,Normal,RM155,,,RM 10,0,RM 155,RM 145
-393629,Gawas,Team Gawas Finesse,Single Hand (Casting),BC,5',1PCS,3 - 8 PE,Ultra Light,2 - 8G,Fast,Carbon,Fuji,Aluminium,RM288,,,RM 30,Lifetime,RM 288,RM 258
-813122,Rodford,Guncast 2,Single Hand (Casting),BC,"5'6""",1PCS,5 - 14 PE,Medium Light,4 - 15G,Fast,Graphite,Zirconia,Fuji,RM210,,,RM 20,0,RM 210,RM 190
-283716,Awa-Shima,Full Moon Stick,Single Hand (Casting),BC,5'3,1PCS,5 - 14 PE,Medium Light,4 - 16G,Moderate,Carbon,Normal,Normal,RM99,,,RM 10,3M,RM 99,RM 89
-283750,Gtech,Giant Shooter,Single Hand (Casting),BC,5'3,1PCS,5 - 14 PE,Medium Light,4 - 16G,Moderate,Carbon,Normal,Aluminium,RM169,,,RM 10,1M,RM 169,RM 159
-283749,Gtech,Giant Shooter,Single Hand (Casting),BC,5',1PCS,4 - 12 PE,Medium Light,3 - 14G,Moderate,Carbon,Normal,Aluminium,RM165,,,RM 10,0,RM 165,RM 155
-283751,Gtech,Giant Shooter,Single Hand (Casting),BC,"5'6""",1PCS,8 - 16 PE,Medium Light,7 - 21G,Fast,Carbon,Normal,Aluminium,RM175,,,RM 10,0,RM 175,RM 165
-263310,Eupro,Lunastick Classic,Single Hand (Casting),BC,"5'8""",1PCS,5 - 14 PE,Medium Light,3 - 12G,Moderate - Fast,Graphite,Fuji,Aluminium,RM135,,,RM 10,0,RM 135,RM 125
-0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
-0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
-0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
-0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
+843109,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Slow - Moderate,Carbon,Normal,Normal,RM125,,,RM 10,0,RM 125,RM 115
+813024,Viper,Tanto,Single Hand (Casting),BC,"5'2""",1PCS,5 - 14 LB,Medium Light,1/10 - 3/7OZ,Fast,Graphite,Normal,Normal,RM155,,,RM 10,0,RM 155,RM 145
+393629,Gawas,Team Gawas Finesse,Single Hand (Casting),BC,5',1PCS,3 - 8 LB,Ultra Light,2 - 8G,Fast,Carbon,Fuji,Aluminium,RM288,,,RM 30,Lifetime,RM 288,RM 258
+813122,Rodford,Guncast 2,Single Hand (Casting),BC,"5'6""",1PCS,5 - 14 LB,Medium Light,4 - 15G,Fast,Graphite,Zirconia,Fuji,RM210,,,RM 20,0,RM 210,RM 190
+283716,Awa-Shima,Full Moon Stick,Single Hand (Casting),BC,5'3,1PCS,5 - 14 LB,Medium Light,4 - 16G,Moderate,Carbon,Normal,Normal,RM99,,,RM 10,3M,RM 99,RM 89
+283750,Gtech,Giant Shooter,Single Hand (Casting),BC,5'3,1PCS,5 - 14 LB,Medium Light,4 - 16G,Moderate,Carbon,Normal,Aluminium,RM169,,,RM 10,1M,RM 169,RM 159
+283749,Gtech,Giant Shooter,Single Hand (Casting),BC,5',1PCS,4 - 12 LB,Medium Light,3 - 14G,Moderate,Carbon,Normal,Aluminium,RM165,,,RM 10,0,RM 165,RM 155
+283751,Gtech,Giant Shooter,Single Hand (Casting),BC,"5'6""",1PCS,8 - 16 LB,Medium Light,7 - 21G,Fast,Carbon,Normal,Aluminium,RM175,,,RM 10,0,RM 175,RM 165
+263310,Eupro,Lunastick Classic,Single Hand (Casting),BC,"5'8""",1PCS,5 - 14 LB,Medium Light,3 - 12G,Moderate - Fast,Graphite,Fuji,Aluminium,RM135,,,RM 10,0,RM 135,RM 125
+103642,Seahawk,Stream Cast,Single Hand (Casting),BC,5'3,2PCS,4 - 12 LB,Medium Light,4 - 18G,Moderate,Carbon,SiC,Aluminium,RM145,,,RM 10,0,RM 145,RM 135
+843166,Bullzen,Hyuga Ragnarok Finesse,Single Hand (Casting),BC,"5'8""",2PCS,3 - 8 LB,Ultra Light,4 - 10G,Moderate,Carbon,Normal,Normal,RM120,,,RM 10,0,RM 120,RM 110
+843110,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,3 - 8 LB,Ultra Light,4 - 10G,Slow - Moderate,Carbon,Normal,Normal,RM130,,,RM 10,0,RM 130,RM 120
+843167,Bullzen,Hyuga Ragnarok Finesse,Single Hand (Casting),BC,"5'8""",2PCS,4 - 10 LB,Medium Light,6 - 14G,Moderate,Carbon,Normal,Normal,RM120,,,RM 10,0,RM 120,RM 110
 0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
 0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
 0,0,0,0,0,0,0,   PE,0,0,0,0,0,0,,,,,0,,
