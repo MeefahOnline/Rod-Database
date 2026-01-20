@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rod Selection</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
@@ -16,12 +15,10 @@
     --border-soft: #d6dce8;
 }
 
-/* Base */
 body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(180deg, #f4f7fb, #eef2f8);
     margin: 0;
-    color: #1a1a1a;
 }
 
 /* Header */
@@ -31,26 +28,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .header h2 {
     font-family: 'Playfair Display', serif;
     font-size: 36px;
-    font-weight: 600;
-    color: #ffffff;
+    color: white;
     margin: 0;
 }
-
-/* Logo */
-.logo {
-    height: 80px;
-    object-fit: contain;
-}
+.logo { height: 80px; }
 
 /* Page */
-.page {
-    padding: 20px;
-}
+.page { padding: 20px; }
 
 /* Controls */
 .controls {
@@ -58,161 +46,117 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    gap: 10px;
 }
-.controls input {
-    width: 260px;
-    padding: 8px 12px;
-    font-size: 13px;
-    border-radius: 8px;
-    border: 1px solid var(--border-soft);
+
+.controls-left {
+    display: flex;
+    gap: 8px;
 }
+
 button {
     background: var(--navy-accent);
-    color: #fff;
+    color: white;
     border: none;
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 13px;
     cursor: pointer;
 }
-button:hover { opacity: 0.9; }
+
+input[type="text"] {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1px solid var(--border-soft);
+    width: 240px;
+}
 
 /* Loading */
-#loading {
-    background: var(--navy-light);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 8px;
-}
+#loading { background: var(--navy-light); border-radius: 6px; margin-bottom: 8px; }
 #loadingBar {
     height: 18px;
     width: 0%;
     background: var(--navy-accent);
-    font-size: 11px;
     color: white;
-    text-align: center;
+    font-size: 11px;
     line-height: 18px;
+    text-align: center;
 }
 
-/* Filters Layout */
+/* Filters */
 #filters {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 18px;
 }
+.filter-column { display: grid; gap: 14px; }
 
-/* Filter Column */
-.filter-column {
-    display: grid;
-    gap: 14px;
-}
-
-/* Filter Box */
 .filter-box {
     background: white;
     border: 1px solid var(--border-soft);
     border-radius: 12px;
+    height: 190px;
     display: flex;
     flex-direction: column;
-    height: 190px;
     overflow: hidden;
 }
 
-/* Filter Header */
+.filter-box.collapsed { height: auto; }
+.filter-box.collapsed .checkbox-group { display: none; }
+.filter-box.collapsed .toggle { transform: rotate(-90deg); }
+
 .filter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 10px 12px;
     font-weight: 600;
-    color: var(--navy);
-    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    justify-content: space-between;
     cursor: pointer;
+    border-bottom: 1px solid var(--border-soft);
 }
 
-.toggle {
-    font-size: 18px;
-    transition: transform 0.2s ease;
-}
+.toggle { transition: transform 0.2s ease; }
 
-/* Collapsed */
-.filter-box.collapsed {
-    height: auto;
-}
-.filter-box.collapsed .checkbox-group {
-    display: none;
-}
-.filter-box.collapsed .toggle {
-    transform: rotate(-90deg);
-}
-
-/* Checkbox Group */
 .checkbox-group {
-    flex: 1;
     padding: 8px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2,1fr);
     gap: 6px;
     overflow-y: auto;
 }
 
-/* Circular Checkbox */
-.checkbox-group input[type="checkbox"] {
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    border: 2px solid var(--navy-accent);
-    border-radius: 50%;
-    margin-right: 6px;
-}
-.checkbox-group input[type="checkbox"]:checked {
-    background: var(--navy-accent);
-}
-.checkbox-group input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: white;
-    border-radius: 50%;
-    top: 4px;
-    left: 4px;
-}
-
-/* Checkbox Label */
 .checkbox-group label {
+    font-size: 12.5px;
     display: flex;
     align-items: center;
-    font-size: 12.5px;
-    cursor: pointer;
 }
 
-/* Table Wrapper */
+/* Table */
 .table-wrapper {
     max-height: 65vh;
     overflow: auto;
     border-radius: 12px;
 }
 
-/* Table */
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
 }
+
+thead th {
+    position: sticky;
+    top: 0;
+    background: var(--navy-light);
+    z-index: 2;
+}
+
 th, td {
     padding: 8px 10px;
     font-size: 13px;
     border-bottom: 1px solid var(--border-soft);
     white-space: nowrap;
-}
-th {
-    background: var(--navy-light);
-    color: var(--navy);
-    position: sticky;
-    top: 0;
-    z-index: 2;
 }
 
 /* Overlay */
@@ -225,14 +169,11 @@ th {
     justify-content: center;
     font-size: 22px;
     font-weight: 600;
-    color: var(--navy);
     z-index: 999;
 }
 
 /* Mobile */
-@media (max-width: 900px) {
-    .header h2 { font-size: 28px; }
-    .logo { height: 60px; }
+@media(max-width:900px){
     #filters { grid-template-columns: 1fr; }
     .checkbox-group { grid-template-columns: 1fr; }
 }
@@ -250,7 +191,11 @@ th {
 
 <div class="controls">
     <input type="text" id="searchBox" placeholder="Search rods..." oninput="renderTable()">
-    <button onclick="clearFilters()">Clear All Filters</button>
+    <div class="controls-left">
+        <button onclick="collapseAll()">Collapse Filters</button>
+        <button onclick="expandAll()">Expand Filters</button>
+        <button onclick="clearFilters()">Clear Filters</button>
+    </div>
 </div>
 
 <div id="loading"><div id="loadingBar">Loading...</div></div>
@@ -275,24 +220,20 @@ th {
 const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Customer%20Data.json";
 
 const factors = [
-  { name: "Brand" },{ name: "Type" },{ name: "Reel Type" },{ name: "Length" },
-  { name: "Joint Type" },{ name: "Power" },{ name: "Action" },{ name: "Material" },
-  { name: "Ring" },{ name: "Reel Seat" },{ name: "Warranty" }
+  { name: "Brand" },{ name: "Type" },{ name: "Reel Type" },
+  { name: "Length" },{ name: "Joint Type" },{ name: "Power" },
+  { name: "Action" },{ name: "Material" },{ name: "Ring" },
+  { name: "Reel Seat" },{ name: "Warranty" }
 ];
 
 const filterColumns = [1,3,4,5,6,8,10,11,12,13,18];
+let tableData=[], filtersData={};
 
-let tableData = [];
-let filtersData = {};
-
-fetch(jsonURL)
-.then(r=>r.json())
-.then(data=>{
+fetch(jsonURL).then(r=>r.json()).then(data=>{
     tableData=data;
     loadingBar.style.width="100%";
     loading.style.display="none";
-
-    tableHeader.innerHTML = Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
+    tableHeader.innerHTML=Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
 
     factors.forEach((f,i)=>{
         filtersData[f.name]=new Set();
@@ -305,23 +246,12 @@ fetch(jsonURL)
     factors.forEach((f,i)=>{
         const box=document.createElement("div");
         box.className="filter-box collapsed";
-
-        box.innerHTML = `
-            <div class="filter-header">
-                <span>${f.name}</span>
-                <span class="toggle">▾</span>
-            </div>
-        `;
-
+        box.innerHTML=`<div class="filter-header">${f.name}<span class="toggle">▾</span></div>`;
         const group=document.createElement("div");
         group.className="checkbox-group";
 
         [...filtersData[f.name]].sort().forEach(v=>{
-            group.innerHTML+=`
-            <label>
-                <input type="checkbox" class="filter" data-factor="${f.name}" value="${v}">
-                ${v}
-            </label>`;
+            group.innerHTML+=`<label><input type="checkbox" class="filter" data-factor="${f.name}" value="${v}"> ${v}</label>`;
         });
 
         box.appendChild(group);
@@ -333,23 +263,28 @@ fetch(jsonURL)
     renderTable();
 });
 
+function collapseAll(){
+    document.querySelectorAll(".filter-box").forEach(b=>b.classList.add("collapsed"));
+}
+function expandAll(){
+    document.querySelectorAll(".filter-box").forEach(b=>b.classList.remove("collapsed"));
+}
 function clearFilters(){
     document.querySelectorAll(".filter").forEach(cb=>cb.checked=false);
-    searchBox.value="";
     renderTable();
 }
 
 function renderTable(){
     overlay.style.display="flex";
     setTimeout(()=>{
-        const searchTerm = searchBox.value.toLowerCase().trim();
+        const search=document.getElementById("searchBox").value.toLowerCase().trim();
+        tableBody.innerHTML="";
         const selected={};
 
         factors.forEach(f=>{
             selected[f.name]=[...document.querySelectorAll(`.filter[data-factor="${f.name}"]:checked`)].map(c=>c.value);
         });
 
-        tableBody.innerHTML="";
         const noFilters=factors.every(f=>!selected[f.name].length);
 
         tableData.forEach(r=>{
@@ -358,7 +293,7 @@ function renderTable(){
                 return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
             });
 
-            const textMatch = !searchTerm || Object.values(r).join(" ").toLowerCase().includes(searchTerm);
+            const textMatch=!search || Object.values(r).join(" ").toLowerCase().includes(search);
 
             let allZero=false;
             if(noFilters){
