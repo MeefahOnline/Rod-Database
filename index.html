@@ -177,6 +177,35 @@ th{
 @media(max-width:900px){
     #filters{grid-template-columns:1fr}
     .checkbox-group{grid-template-columns:1fr}
+}@media(max-width:600px){
+
+  /* Stack controls vertically */
+  .controls{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+
+  /* Full-width search */
+  .controls input{
+    width:100%;
+    font-size:14px;
+  }
+
+  /* Button container fix */
+  .controls > div{
+    display:flex;
+    gap:10px;
+  }
+
+  /* Buttons behave nicely */
+  .controls button{
+    flex:1;
+    padding:10px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+
 }
 </style>
 </head>
