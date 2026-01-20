@@ -107,7 +107,7 @@
 113564,Daiwa,23' Tornado-X,Casting,Spinning,6'3,2PCS,6 - 16 LB,Medium,6-21G,Fast,Graphite,Fuji,Normal,0
 843151,Bullzen,Black Hole CA2,Casting,Spinning,6'3,2PCS,6 - 12 LB,Light,6-20G,Moderate - Fast,Carbon,Normal,Normal,0
 863174,Extend,Shark 21,Casting,Spinning,6'3,2PCS,6 - 14 LB,Medium,5-15G,Fast,Carbon,Fuji,Fuji,0
-543760,Shimano,Bass One XT 263,Casting,Spinning,6'3,2PCS,4 - 8 LB,Ultra Light,4-12G,Moderate - Fast,CI4+,CI4+,CI4+,12M
+543760,Shimano,Bass One XT 263,Casting,Spinning,6'3,2PCS,4 - 8 LB,Ultra Light,4-12G,Moderate - Fast,Carbon,Fuji,CI4+,12M
 824122,Rapala,Cloassic Vaaksy,Casting,Spinning,"6'6""",2PCS,4 - 12 LB,Light,3.5-14G,Fast,Graphite,Fuji,Fuji,0
 543885,Shimano,Sellus,Casting,Spinning,"6'8""",2PCS,5 - 20 LB,Medium,1/8 - 3/8oz,Fast,Graphite,Normal,Normal,0
 543891,Shimano,Stimula,Casting,Spinning,"6'6""",2PCS,6 - 10 LB,Light,3/16 - 3/8 oz,Moderate - Fast,Graphite,Normal,Normal,0
@@ -337,44 +337,44 @@
 843166,Bullzen,Hyuga Ragnarok Finesse,Single Hand (Casting),BC,"5'8""",2PCS,3 - 8 LB,Ultra Light,4 - 10G,Moderate,Carbon,Normal,Normal,0
 843110,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,3 - 8 LB,Ultra Light,4 - 10G,Slow - Moderate,Carbon,Normal,Normal,0
 843167,Bullzen,Hyuga Ragnarok Finesse,Single Hand (Casting),BC,"5'8""",2PCS,4 - 10 LB,Medium Light,6 - 14G,Moderate,Carbon,Normal,Normal,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
+263124,Eupro,Imagine,Casting,Spinning,"4'6""",1PCS,4 - 12 LB,Medium Light,4 - 16G,Fast,Carbon,Normal,Normal,0
+713700,Ugly Stik,USGXSP,Squid,Spinning,"5'10""",2PCS,2 - 6 LB,Ultra Light,0,Slow - Moderate,Graphite,Normal,Normal,0
+103197,Team Seahawk,Randuk,Single Hand (Casting),Spinning,5',1PCS,4 - 10 LB,Light,5 - 12G,Moderate,Carbon,Normal,Normal,0
+103644,Seahawk,Stream Cast,Single Hand (Casting),Spinning,5'3,2PCS,4 - 12 LB,Medium Light,4 - 18G,Moderate,Carbon,SiC,Aluminium,0
+103595,Team Seahawk,Randuk,Single Hand (Casting),Spinning,5'3,1PCS,5 - 12 LB,Medium Light,6 - 15G,Slow,Carbon,Normal,Aluminium,0
+393213,Lemax,Slim Max Micro Game,Casting,Spinning,"5'6""",2PCS,3 - 8 LB,Ultra Light,3 - 10G,Fast,Carbon,Normal,Normal,0
+103277,Team Seahawk,Randuk,Single Hand (Casting),Spinning,"5'6""",1PCS,5 - 12 LB,Medium Light,6 - 15G,Slow - Moderate,Carbon,Normal,Aluminium,0
+103645,Seahawk,Stream Cast,Single Hand (Casting),Spinning,"5'6""",2PCS,5 - 16 LB,Medium Light,4 - 22G,Moderate - Fast,Carbon,SiC,Aluminium,0
+713713,Ugly Stik,GX2 US Spin Elite,Squid,Spinning,"5'6""",2PCS,4 - 8 LB,Ultra Light,1/16 - 3/8OZ,Slow - Moderate,Graphite,Stainless Steel,Normal,7YRS
+393211,Lemax,Slim Max Micro Game,Casting,Spinning,"5'6""",2PCS,2 - 6 LB,Ultra Light,2 - 7G,Slow - Moderate,Carbon,Normal,Normal,0
+103648,Seahawk,Flexis Lite RX,Casting,Spinning,"6'6""",2PCS,4 - 10 LB,Light,5 - 12G,Extra Fast,Carbon,Fuji,Normal,0
+393417,Lemax,Japan Finesse Hunter,Casting,Spinning,"5'6""",BJ,4 - 12 LB,Medium Light,7 - 15G,Moderate,Carbon,Normal,Normal,0
+113428,Daiwa,20' Crossfire-X ULG,Casting,Spinning,"5'9""",2PCS,2 - 6 LB,Ultra Light,1.7 - 12G,Fast,Graphite,Titanium,Stainless Steel,0
+843164,Bullzen,Hyuga Ragnarok Finesse,Casting,Spinning,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Moderate,Carbon,Normal,Normal,0
+843170,Bullzen,Hyuga Ragnarok Finesse,Casting,Spinning,"5'8""",2PCS,4 - 10 LB,Light,6 - 14G,Fast,Carbon,Normal,Normal,0
+264164,Eupro,Feather Light,Casting,Spinning,6',2PCS,2 - 6 LB,Ultra Light,3 - 8G,Slow - Moderate,Carbon,Fuji,Normal,0
+713708,Ugly Stik,GX2-USGXSP,Casting,Spinning,6',2PCS,4 - 10 LB,Light,0,Slow - Moderate,Graphite,Normal,Normal,0
+283667,Awa-Shima,Incomparable Light,Casting,Spinning,6',2PCS,2 - 6 LB,Ultra Light,2 - 10G,Slow - Moderate,Carbon,Normal,Aluminium,3M
+103522,Seahawk,Flexis Lite,Casting,Spinning,6'3,2PCS,2 - 6 LB,Ultra Light,2 - 8G,Fast,(Comp),Normal,Normal,0
+393627,Lemax,Slim Max Micro Game,Casting,BC,"5'6""",2PCS,3 - 8 LB,Ultra Light,3 - 10G,Fast,Carbon,Normal,Normal,0
+393215,Lemax,Slim Max Micro Game,Casting,BC,6',2PCS,3 - 8 LB,Ultra Light,3 - 10G,Fast,Carbon,Normal,Normal,0
+103471,Seahawk,Rover Lite,Casting,BC,6'3,2PCS,2 - 6 LB,Ultra Light,4 - 8G,Moderate - Fast,Carbon,Normal,Normal,0
+103169,Seahawk,Flexis Lite,Casting,BC,6'3,2PCS,2 - 6 LB,Ultra Light,2 - 8G,Moderate - Fast,(Comp),Normal,Normal,0
+103649,Seahawk,Flexis Lite RX,Casting,BC,6'3,2PCS,4 - 10 LB,Light,5 - 12G,Fast,Carbon,Fuji,Normal,0
+824051,Rapala,BFS Red Darter,Casting,BC,"6'5""",1PCS,4 - 8 LB,Ultra Light,2 - 10G,Fast,Graphite,Fuji,Normal,0
+283673,Relix Nusantara,Capung,Casting,BC,"6'6""",2PCS,1 - 5 LB,Ultra Light,1 - 8G,Moderate - Fast,Carbon,Sea,Normal,12M
+263406,Eupro,Crossfire X,Casting,Spinning,7',2PCS,4 - 10 LB,Light,5 - 15G,Fast,Graphite,SiC,Normal,0
+713712,Ugly Stik,GX2-USSP,Squid,Spinning,7',2PCS,2 - 6 LB,Ultra Light,0,Slow,Graphite,Normal,Normal,0
+113548,Daiwa,22' Aerolite,Casting,Spinning,"6'8""",2PCS,3 - 8 LB,Ultra Light,2 - 14G,Fast,Graphite,Fuji,Normal,0
+543737,Shimano,22' Majestic XT,Casting,Spinning,"6'8""",2PCS,3 - 6 LB,Ultra Light,5 - 15G,Fast,Carbon,Fuji,Normal,12M
+713806,Shakespeare,Micro Series,Casting,Spinning,"6'6""",1PCS,4 - 10 LB,Light,0,Moderate,Graphite,Stainless Steel,Normal,0
+113547,Daiwa,22' Aerolite,Casting,Spinning,"6'5""",2PCS,2 - 6 LB,Ultra Light,1.7 - 12G,Slow - Moderate,Graphite,Fuji,Normal,0
+263405,Eupro,Crossfire X,Casting,Spinning,"6'6""",2PCS,3 - 8 LB,Ultra Light,2 - 12G,Fast,Graphite,SiC,Normal,0
+824058,Storm,Discovery,Casting,Spinning,"6'6""",2PCS,2 - 6 LB,Ultra Light,3 - 7G,Moderate,(Comp),Fuji,Fuji,0
+543855,Shimano,22' Majestic XT,Casting,Spinning,"6'4""",2PCS,2 - 5 LB,Ultra Light,3 - 10G,Fast,Carbon,Fuji,Normal,12M
+103647,Seahawk,Flexis Lite RX,Casting,Spinning,6'3,2PCS,3 - 8 LB,Ultra Light,4 - 10G,Fast,Carbon,Fuji,Normal,0
+113427,Daiwa,20' Crossfire-X ULG,Casting,Spinning,6'3,2PCS,2 - 6 LB,Ultra Light,1.7 - 12G,Fast,Graphite,Titanium,Stainless Steel,0
+283668,Awa-Shima,24' Incomparable Light,Casting,Spinning,6'3,2PCS,2 - 6 LB,Ultra Light,2 - 10G,Slow,Carbon,Normal,Normal,3M
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0
