@@ -15,14 +15,12 @@
     --border-soft:#d6dce8;
 }
 
-/* Base */
 body{
     font-family:'Inter',sans-serif;
     background:linear-gradient(180deg,#f4f7fb,#eef2f8);
     margin:0;
 }
 
-/* Header */
 .header{
     background:linear-gradient(90deg,var(--navy),#102a4d);
     padding:22px 28px;
@@ -38,10 +36,8 @@ body{
 }
 .logo{height:80px}
 
-/* Page */
 .page{padding:20px}
 
-/* Controls */
 .controls{
     display:flex;
     justify-content:space-between;
@@ -64,7 +60,6 @@ button{
     cursor:pointer;
 }
 
-/* Loading */
 #loading{
     background:var(--navy-light);
     border-radius:6px;
@@ -78,7 +73,6 @@ button{
     text-align:center;
 }
 
-/* Filters */
 #filters{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -89,7 +83,6 @@ button{
 
 .filter-column{display:grid;gap:14px}
 
-/* FIXED FILTER BOX LOGIC */
 .filter-box{
     background:#fff;
     border:1px solid var(--border-soft);
@@ -99,7 +92,6 @@ button{
     flex-direction:column;
 }
 
-/* Header */
 .filter-header{
     padding:10px 12px;
     display:flex;
@@ -109,7 +101,6 @@ button{
     border-bottom:1px solid var(--border-soft);
 }
 
-/* Toggle icon */
 .toggle{
     font-size:18px;
     transition:transform .2s ease;
@@ -118,7 +109,6 @@ button{
     transform:rotate(-90deg);
 }
 
-/* Checkbox group */
 .checkbox-group{
     padding:8px;
     display:grid;
@@ -128,12 +118,10 @@ button{
     max-height:150px;
 }
 
-/* Collapse behavior */
 .filter-box.collapsed .checkbox-group{
     display:none;
 }
 
-/* Checkbox style */
 .checkbox-group label{
     font-size:12.5px;
     display:flex;
@@ -151,7 +139,6 @@ button{
     background:var(--navy-accent);
 }
 
-/* Table */
 .table-wrapper{
     max-height:65vh;
     overflow:auto;
@@ -175,7 +162,6 @@ th{
     z-index:2;
 }
 
-/* Overlay */
 #overlay{
     position:fixed;
     inset:0;
@@ -188,7 +174,6 @@ th{
     color:var(--navy);
 }
 
-/* Mobile */
 @media(max-width:900px){
     #filters{grid-template-columns:1fr}
     .checkbox-group{grid-template-columns:1fr}
@@ -252,7 +237,7 @@ fetch(jsonURL).then(r=>r.json()).then(data=>{
   const values=new Set();
   data.forEach(r=>{
     const v=r[Object.keys(r)[filterColumns[i]]];
-    if(v&&v!=="0")values.add(v);
+    if(v && v!=="0") values.add(v);
   });
 
   const box=document.createElement("div");
@@ -309,13 +294,23 @@ function renderTable(){
 
   tableBody.innerHTML="";
   tableData.forEach(r=>{
+
+    // ❌ HIDE ROWS WITH ZERO VALUES
+    const hasZero = Object.values(r).some(v => v === 0 || v === "0");
+    if(hasZero) return;
+
     const match=factors.every((f,i)=>{
       if(!selected[f.name].length)return true;
       return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
     });
-    const textMatch=!search||Object.values(r).join(" ").toLowerCase().includes(search);
-    if(match&&textMatch){
-      tableBody.innerHTML+=`<tr>${Object.values(r).map(v=>`<td>${v}</td>`).join("")}</tr>`;
+
+    const textMatch=!search || Object.values(r).join(" ").toLowerCase().includes(search);
+
+    if(match && textMatch){
+      tableBody.innerHTML+=`
+        <tr>
+          ${Object.values(r).map(v=>`<td>${v}</td>`).join("")}
+        </tr>`;
     }
   });
   overlay.style.display="none";
