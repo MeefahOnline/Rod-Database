@@ -8,174 +8,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --navy: #0b1f3a;
-    --navy-accent: #1f3c88;
-    --navy-light: #e9eef6;
-    --border-soft: #d6dce8;
+:root{
+    --navy:#0b1f3a;
+    --navy-accent:#1f3c88;
+    --navy-light:#e9eef6;
+    --border-soft:#d6dce8;
 }
-
-body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(180deg, #f4f7fb, #eef2f8);
-    margin: 0;
+body{
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(180deg,#f4f7fb,#eef2f8);
+    margin:0;
 }
-
-/* Header */
-.header {
-    background: linear-gradient(90deg, var(--navy), #102a4d);
-    padding: 22px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.header{
+    background:linear-gradient(90deg,var(--navy),#102a4d);
+    padding:22px 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
-.header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    color: white;
-    margin: 0;
+.header h2{
+    font-family:'Playfair Display',serif;
+    color:#fff;
+    font-size:36px;
+    margin:0;
 }
-.logo { height: 80px; }
-
-/* Page */
-.page { padding: 20px; }
+.logo{height:80px}
+.page{padding:20px}
 
 /* Controls */
-.controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
+.controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
 }
-
-.controls-left {
-    display: flex;
-    gap: 8px;
+.controls input{
+    width:260px;
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid var(--border-soft);
 }
-
-button {
-    background: var(--navy-accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-input[type="text"] {
-    padding: 8px 12px;
-    font-size: 13px;
-    border-radius: 8px;
-    border: 1px solid var(--border-soft);
-    width: 240px;
+button{
+    background:var(--navy-accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:8px 16px;
+    font-size:13px;
+    cursor:pointer;
 }
 
 /* Loading */
-#loading { background: var(--navy-light); border-radius: 6px; margin-bottom: 8px; }
-#loadingBar {
-    height: 18px;
-    width: 0%;
-    background: var(--navy-accent);
-    color: white;
-    font-size: 11px;
-    line-height: 18px;
-    text-align: center;
-}
+#loading{background:var(--navy-light);border-radius:6px;margin-bottom:8px}
+#loadingBar{height:18px;background:var(--navy-accent);color:#fff;font-size:11px;text-align:center}
 
 /* Filters */
-#filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 18px;
+#filters{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:18px;
 }
-.filter-column { display: grid; gap: 14px; }
+#filters.hidden{display:none}
 
-.filter-box {
-    background: white;
-    border: 1px solid var(--border-soft);
-    border-radius: 12px;
-    height: 190px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+.filter-column{display:grid;gap:14px}
+.filter-box{
+    background:#fff;
+    border:1px solid var(--border-soft);
+    border-radius:12px;
+    height:190px;
+    overflow:hidden;
 }
-
-.filter-box.collapsed { height: auto; }
-.filter-box.collapsed .checkbox-group { display: none; }
-.filter-box.collapsed .toggle { transform: rotate(-90deg); }
-
-.filter-header {
-    padding: 10px 12px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-soft);
+.filter-header{
+    padding:10px 12px;
+    display:flex;
+    justify-content:space-between;
+    font-weight:600;
+    cursor:pointer;
 }
+.filter-box.collapsed .checkbox-group{display:none}
+.toggle{font-size:18px}
 
-.toggle { transition: transform 0.2s ease; }
-
-.checkbox-group {
-    padding: 8px;
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 6px;
-    overflow-y: auto;
+.checkbox-group{
+    padding:8px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+    overflow-y:auto;
 }
-
-.checkbox-group label {
-    font-size: 12.5px;
-    display: flex;
-    align-items: center;
+.checkbox-group label{font-size:12.5px;display:flex;align-items:center}
+.checkbox-group input{
+    appearance:none;
+    width:15px;height:15px;
+    border:2px solid var(--navy-accent);
+    border-radius:50%;
+    margin-right:6px;
 }
+.checkbox-group input:checked{background:var(--navy-accent)}
 
 /* Table */
-.table-wrapper {
-    max-height: 65vh;
-    overflow: auto;
-    border-radius: 12px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
-
-thead th {
-    position: sticky;
-    top: 0;
-    background: var(--navy-light);
-    z-index: 2;
-}
-
-th, td {
-    padding: 8px 10px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--border-soft);
-    white-space: nowrap;
+.table-wrapper{max-height:65vh;overflow:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:8px 10px;font-size:13px;border-bottom:1px solid var(--border-soft);white-space:nowrap}
+th{
+    background:var(--navy-light);
+    position:sticky;
+    top:0;
+    z-index:2;
 }
 
 /* Overlay */
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255,255,255,0.75);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: 600;
-    z-index: 999;
-}
-
-/* Mobile */
-@media(max-width:900px){
-    #filters { grid-template-columns: 1fr; }
-    .checkbox-group { grid-template-columns: 1fr; }
+#overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(255,255,255,.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:600;
+    color:var(--navy);
 }
 </style>
 </head>
@@ -190,11 +142,10 @@ th, td {
 <div class="page">
 
 <div class="controls">
-    <input type="text" id="searchBox" placeholder="Search rods..." oninput="renderTable()">
-    <div class="controls-left">
-        <button onclick="collapseAll()">Collapse Filters</button>
-        <button onclick="expandAll()">Expand Filters</button>
-        <button onclick="clearFilters()">Clear Filters</button>
+    <input id="searchBox" placeholder="Search rods..." oninput="renderTable()">
+    <div>
+        <button onclick="toggleFilters()">Hide Filters</button>
+        <button onclick="clearFilters()">Clear All Filters</button>
     </div>
 </div>
 
@@ -207,8 +158,8 @@ th, td {
 
 <div class="table-wrapper">
 <table>
-    <thead><tr id="tableHeader"></tr></thead>
-    <tbody id="tableBody"></tbody>
+<thead><tr id="tableHeader"></tr></thead>
+<tbody id="tableBody"></tbody>
 </table>
 </div>
 
@@ -217,98 +168,84 @@ th, td {
 <div id="overlay">Filtering...</div>
 
 <script>
-const jsonURL = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Customer%20Data.json";
+const jsonURL="https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Customer%20Data.json";
 
-const factors = [
-  { name: "Brand" },{ name: "Type" },{ name: "Reel Type" },
-  { name: "Length" },{ name: "Joint Type" },{ name: "Power" },
-  { name: "Action" },{ name: "Material" },{ name: "Ring" },
-  { name: "Reel Seat" },{ name: "Warranty" }
+const factors=[
+ {name:"Brand"},{name:"Type"},{name:"Reel Type"},{name:"Length"},
+ {name:"Joint Type"},{name:"Power"},{name:"Action"},
+ {name:"Material"},{name:"Ring"},{name:"Reel Seat"},{name:"Warranty"}
 ];
 
-const filterColumns = [1,3,4,5,6,8,10,11,12,13,18];
-let tableData=[], filtersData={};
+const filterColumns=[1,3,4,5,6,8,10,11,12,13,18];
+let tableData=[],filtersData={},filtersHidden=false;
 
 fetch(jsonURL).then(r=>r.json()).then(data=>{
-    tableData=data;
-    loadingBar.style.width="100%";
-    loading.style.display="none";
-    tableHeader.innerHTML=Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
+ tableData=data;
+ loading.style.display="none";
+ tableHeader.innerHTML=Object.keys(data[0]).map(h=>`<th>${h}</th>`).join("");
 
-    factors.forEach((f,i)=>{
-        filtersData[f.name]=new Set();
-        data.forEach(r=>{
-            const v=r[Object.keys(r)[filterColumns[i]]];
-            if(v && v!=="0") filtersData[f.name].add(v.toString().trim());
-        });
-    });
+ factors.forEach((f,i)=>{
+  filtersData[f.name]=new Set();
+  data.forEach(r=>{
+    const v=r[Object.keys(r)[filterColumns[i]]];
+    if(v&&v!=="0")filtersData[f.name].add(v);
+  });
+ });
 
-    factors.forEach((f,i)=>{
-        const box=document.createElement("div");
-        box.className="filter-box collapsed";
-        box.innerHTML=`<div class="filter-header">${f.name}<span class="toggle">▾</span></div>`;
-        const group=document.createElement("div");
-        group.className="checkbox-group";
+ factors.forEach((f,i)=>{
+  const box=document.createElement("div");
+  box.className="filter-box collapsed";
+  box.innerHTML=`<div class="filter-header">
+      <span>${f.name}</span><span class="toggle">▾</span></div>`;
+  const group=document.createElement("div");
+  group.className="checkbox-group";
+  [...filtersData[f.name]].sort().forEach(v=>{
+    group.innerHTML+=`<label><input type="checkbox" class="filter" data-factor="${f.name}" value="${v}">${v}</label>`;
+  });
+  box.appendChild(group);
+  box.querySelector(".filter-header").onclick=()=>box.classList.toggle("collapsed");
+  (i<Math.ceil(factors.length/2)?col1:col2).appendChild(box);
+ });
 
-        [...filtersData[f.name]].sort().forEach(v=>{
-            group.innerHTML+=`<label><input type="checkbox" class="filter" data-factor="${f.name}" value="${v}"> ${v}</label>`;
-        });
-
-        box.appendChild(group);
-        box.querySelector(".filter-header").onclick=()=>box.classList.toggle("collapsed");
-        (i<Math.ceil(factors.length/2)?col1:col2).appendChild(box);
-    });
-
-    document.querySelectorAll(".filter").forEach(cb=>cb.onchange=renderTable);
-    renderTable();
+ document.querySelectorAll(".filter").forEach(cb=>cb.onchange=renderTable);
+ renderTable();
 });
 
-function collapseAll(){
-    document.querySelectorAll(".filter-box").forEach(b=>b.classList.add("collapsed"));
+function toggleFilters(){
+ const f=document.getElementById("filters");
+ const btn=event.target;
+ filtersHidden=!filtersHidden;
+ f.classList.toggle("hidden");
+ btn.textContent=filtersHidden?"Show Filters":"Hide Filters";
 }
-function expandAll(){
-    document.querySelectorAll(".filter-box").forEach(b=>b.classList.remove("collapsed"));
-}
+
 function clearFilters(){
-    document.querySelectorAll(".filter").forEach(cb=>cb.checked=false);
-    renderTable();
+ document.querySelectorAll(".filter").forEach(cb=>cb.checked=false);
+ searchBox.value="";
+ renderTable();
 }
 
 function renderTable(){
-    overlay.style.display="flex";
-    setTimeout(()=>{
-        const search=document.getElementById("searchBox").value.toLowerCase().trim();
-        tableBody.innerHTML="";
-        const selected={};
-
-        factors.forEach(f=>{
-            selected[f.name]=[...document.querySelectorAll(`.filter[data-factor="${f.name}"]:checked`)].map(c=>c.value);
-        });
-
-        const noFilters=factors.every(f=>!selected[f.name].length);
-
-        tableData.forEach(r=>{
-            const match=factors.every((f,i)=>{
-                if(!selected[f.name].length) return true;
-                return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
-            });
-
-            const textMatch=!search || Object.values(r).join(" ").toLowerCase().includes(search);
-
-            let allZero=false;
-            if(noFilters){
-                allZero=filterColumns.every(i=>{
-                    const v=r[Object.keys(r)[i]];
-                    return !v || v==="0";
-                });
-            }
-
-            if(match && textMatch && !allZero){
-                tableBody.innerHTML+=`<tr>${Object.values(r).map(v=>`<td>${v}</td>`).join("")}</tr>`;
-            }
-        });
-        overlay.style.display="none";
-    },10);
+ overlay.style.display="flex";
+ setTimeout(()=>{
+  const search=searchBox.value.toLowerCase();
+  const selected={};
+  factors.forEach(f=>{
+    selected[f.name]=[...document.querySelectorAll(`.filter[data-factor="${f.name}"]:checked`)].map(c=>c.value);
+  });
+  tableBody.innerHTML="";
+  tableData.forEach(r=>{
+    const match=factors.every((f,i)=>{
+      if(!selected[f.name].length)return true;
+      return selected[f.name].includes(r[Object.keys(r)[filterColumns[i]]]);
+    });
+    const textMatch=!search||Object.values(r).join(" ").toLowerCase().includes(search);
+    if(match&&textMatch){
+      tableBody.innerHTML+=`<tr>${Object.values(r).map(v=>`<td>${v}</td>`).join("")}</tr>`;
+    }
+  });
+  overlay.style.display="none";
+ },10);
 }
 </script>
 
