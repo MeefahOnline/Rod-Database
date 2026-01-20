@@ -331,7 +331,15 @@ function renderTable(){
     tableBody.innerHTML="";
     tableData.forEach(r=>{
 
-      if(Object.values(r).some(v=>v===0||v==="0")) return;
+      // Remove rows that are effectively empty (all zero / blank)
+const values = Object.values(r).map(v => String(v).trim());
+
+const isEmptyRow = values.every(v =>
+  v === "" || v === "0" || v.toLowerCase() === "null"
+);
+
+if(isEmptyRow) return;
+
 
       const match=factors.every((f,i)=>{
         if(!selected[f.name].length) return true;
