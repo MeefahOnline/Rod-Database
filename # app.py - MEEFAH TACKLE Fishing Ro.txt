@@ -1,0 +1,1751 @@
+# app.py - MEEFAH TACKLE Fishing Rod Catalog
+from flask import Flask, jsonify
+import requests
+import time
+import json
+import os
+from pathlib import Path
+
+# Configuration Loader
+def load_config():
+    """Load configuration from JSON file"""
+    config_file = "config/site_config.json"
+    
+    # Default configuration
+    default_config = {
+        "company": {
+            "name": "MEEFAH TACKLE",
+            "font_family": "Playfair Display",
+            "font_style": "italic",
+            "font_weight": "700",
+            "established_year": "1987",
+            "logo_path": "/static/images/logo.jpg"
+        },
+        "contact": {
+            "address_line1": "123 Fishing Street",
+            "address_line2": "Kuala Lumpur, 50000",
+            "address_line3": "Malaysia",
+            "phone": "+60 3-1234 5678",
+            "email": "info@meefahtackle.com",
+            "hours_mon_fri": "9:00 AM - 7:00 PM",
+            "hours_sat": "9:00 AM - 5:00 PM",
+            "hours_sun": "10:00 AM - 4:00 PM"
+        },
+        "homepage": {
+            "gallery1_image": "/static/images/gallery/gallery1.jpg",
+            "gallery2_image": "/static/images/gallery/gallery2.jpg",
+            "gallery3_image": "/static/images/gallery/gallery3.jpg",
+            "gallery4_image": "/static/images/gallery/gallery4.jpg",
+            "featured1_title": "Shimano Teramar TMS-X70M",
+            "featured1_description": "Premium inshore spinning rod with enhanced sensitivity and power. Perfect for saltwater fishing.",
+            "featured1_price": "$179.99",
+            "featured1_image": "/static/images/featured/featured1.jpg",
+            "featured2_title": "Daiwa Tatula SV TW 103",
+            "featured2_description": "Advanced baitcasting reel with SV spool technology for effortless casting and superior control.",
+            "featured2_price": "$229.99",
+            "featured2_image": "/static/images/featured/featured2.jpg",
+            "featured3_title": "St. Croix Legend Tournament",
+            "featured3_description": "Tournament-grade bass fishing rod with exceptional sensitivity and lightweight construction.",
+            "featured3_price": "$299.99",
+            "featured3_image": "/static/images/featured/featured3.jpg"
+        },
+        "styling": {
+            "primary_color": "#0b1f3a",
+            "secondary_color": "#1f3c88",
+            "accent_color": "#ff6b35",
+            "background_color": "#f8fafc",
+            "text_color": "#333333",
+            "nav_height": "120px",
+            "font_size_nav": "42px",
+            "font_size_title": "36px",
+            "font_size_body": "16px"
+        }
+    }
+    
+    # Load user config if exists
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, 'r') as f:
+                user_config = json.load(f)
+            
+            # Merge user config with defaults
+            merged_config = default_config.copy()
+            for section, settings in user_config.items():
+                if section in merged_config:
+                    merged_config[section].update(settings)
+                else:
+                    merged_config[section] = settings
+            
+            return merged_config
+        except Exception:
+            pass
+    
+    return default_config
+
+# Load configuration
+config = load_config()
+
+app = Flask(__name__)
+
+# Cache setup for GitHub data
+_data_cache = None
+_cache_time = 0
+CACHE_DURATION = 300
+
+def is_empty_row(rod):
+    """Check if a row is completely empty"""
+    if not rod:
+        return True
+    
+    for key, value in rod.items():
+        if value is None:
+            continue
+            
+        str_value = str(value).strip().lower()
+        
+        if str_value and str_value != "0" and str_value != "0.0" and str_value != "0.00":
+            return False
+    
+    return True
+
+def clean_json_keys(data):
+    """Clean spaces from JSON keys"""
+    if isinstance(data, dict):
+        cleaned = {}
+        for key, value in data.items():
+            if isinstance(key, str):
+                cleaned[key.strip()] = clean_json_keys(value)
+            else:
+                cleaned[key] = clean_json_keys(value)
+        return cleaned
+    elif isinstance(data, list):
+        return [clean_json_keys(item) for item in data]
+    else:
+        return data
+
+def normalize_column_name(key):
+    """Normalize column names to standard format"""
+    if not key:
+        return key
+    
+    clean_key = str(key).strip()
+    
+    variations = {
+        'itemcode': 'Item Code',
+        'item code': 'Item Code',
+        'ItemCode': 'Item Code',
+        'item_code': 'Item Code',
+        'brand': 'Brand',
+        'model': 'Model',
+        'type': 'Type',
+        'reeltype': 'Reel type',
+        'reel type': 'Reel type',
+        'reel_type': 'Reel type',
+        'ReelType': 'Reel type',
+        'length': 'Length',
+        'jointtype': 'Joint Type',
+        'joint type': 'Joint Type',
+        'joint_type': 'Joint Type',
+        'JointType': 'Joint Type',
+        'power': 'Power',
+        'lureweight': 'Lure Weight',
+        'lure weight': 'Lure Weight',
+        'lure_weight': 'Lure Weight',
+        'LureWeight': 'Lure Weight',
+        'action': 'Action',
+        'material': 'Material',
+        'guide': 'Guide',
+        'reelseat': 'Reel Seat',
+        'reel seat': 'Reel Seat',
+        'reel_seat': 'Reel Seat',
+        'ReelSeat': 'Reel Seat',
+        'price': 'Price',
+        'discount': 'Discount',
+        'cr': 'CR',
+        'gv': 'GV',
+        'warranty': 'Warranty',
+        'afterdiscount': 'After Discount',
+        'after discount': 'After Discount',
+        'after_discount': 'After Discount',
+        'AfterDiscount': 'After Discount',
+        'finalprice': 'Final Price',
+        'final price': 'Final Price',
+        'final_price': 'Final Price',
+        'FinalPrice': 'Final Price',
+    }
+    
+    return variations.get(clean_key.lower(), clean_key)
+
+def create_sample_data():
+    """Create sample rod data"""
+    return [
+        {
+            "Item Code": "SHIM-001",
+            "Brand": "Shimano",
+            "Model": "Teramar TMS-X70M",
+            "Type": "Spinning",
+            "Reel type": "Spinning",
+            "Length": "7'0\"",
+            "Joint Type": "2-piece",
+            "Power": "Medium",
+            "Lure Weight": "1/4-3/4 oz",
+            "Action": "Fast",
+            "Material": "Carbon Fiber",
+            "Guide": "Fuji Alconite",
+            "Reel Seat": "Fuji DPS",
+            "Price": "179.99",
+            "Discount": "10%",
+            "CR": "Yes",
+            "GV": "No",
+            "Warranty": "1 year",
+            "After Discount": "161.99",
+            "Final Price": "161.99"
+        }
+    ]
+
+def load_rods_data():
+    """Fetch rods data from GitHub with caching"""
+    global _data_cache, _cache_time
+    
+    if _data_cache and time.time() - _cache_time < CACHE_DURATION:
+        return _data_cache
+    
+    try:
+        github_url = "https://raw.githubusercontent.com/MeefahOnline/Rod-Database/main/Rod%20Data.json"
+        
+        response = requests.get(github_url, timeout=15)
+        response.raise_for_status()
+        
+        # Handle UTF-8 BOM
+        content = response.content.decode('utf-8-sig')
+        rods = json.loads(content)
+        
+        rods = clean_json_keys(rods)
+        
+        if not isinstance(rods, list):
+            rods = [rods]
+        
+        cleaned_rods = []
+        for rod in rods:
+            normalized_rod = {}
+            for key, value in rod.items():
+                normalized_key = normalize_column_name(key)
+                normalized_rod[normalized_key] = value
+            
+            has_data = False
+            for value in normalized_rod.values():
+                if value is None:
+                    continue
+                str_value = str(value).strip()
+                if str_value and str_value.lower() not in ['', '0', '0.0', '0.00', 'null', 'nan']:
+                    has_data = True
+                    break
+            
+            if has_data:
+                cleaned_rods.append(normalized_rod)
+        
+        _data_cache = cleaned_rods
+        _cache_time = time.time()
+        
+        return cleaned_rods
+        
+    except requests.exceptions.RequestException:
+        return create_sample_data()
+    except json.JSONDecodeError:
+        return create_sample_data()
+    except Exception:
+        if _data_cache:
+            return _data_cache
+        return create_sample_data()
+
+@app.route('/')
+def home():
+    """Homepage"""
+    font_family_url = config["company"]["font_family"].replace(' ', '+')
+    font_url = f"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family={font_family_url}:ital,wght@0,600;0,700;1,600;1,700&display=swap"
+    
+    return f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{config["company"]["name"]} - Premium Fishing Equipment</title>
+        <style>
+            body {{
+                font-family: 'Inter', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: {config["styling"]["background_color"]};
+            }}
+            .main-nav {{
+                background: {config["styling"]["primary_color"]};
+                padding: 0 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                height: {config["styling"]["nav_height"]};
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }}
+            .nav-container {{
+                max-width: 1400px;
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0;
+                height: 100%;
+            }}
+            .logo-area {{
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                height: 100%;
+            }}
+            .logo-img {{
+                height: 100px;
+                width: auto;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+                border-radius: 5px;
+            }}
+            .brand-name {{
+                color: white;
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_nav"]};
+                font-weight: {config["company"]["font_weight"]};
+                font-style: {config["company"]["font_style"]};
+                text-decoration: none;
+                letter-spacing: 1px;
+                text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            }}
+            .nav-menu {{
+                display: flex;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                gap: 10px;
+                align-items: center;
+            }}
+            .nav-link {{
+                color: white;
+                text-decoration: none;
+                padding: 20px 25px;
+                display: block;
+                font-size: {config["styling"]["font_size_body"]};
+                transition: all 0.3s;
+                border-radius: 6px;
+                font-weight: 500;
+            }}
+            .nav-link:hover {{
+                background: rgba(255,255,255,0.15);
+            }}
+            .nav-link.active {{
+                background: {config["styling"]["secondary_color"]};
+                font-weight: 600;
+            }}
+            .dropdown {{
+                position: relative;
+            }}
+            .dropdown-menu {{
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                min-width: 200px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                border-radius: 8px;
+                padding: 10px 0;
+                z-index: 1000;
+            }}
+            .dropdown:hover .dropdown-menu {{
+                display: block;
+            }}
+            .dropdown-item {{
+                display: block;
+                padding: 12px 20px;
+                color: {config["styling"]["primary_color"]};
+                text-decoration: none;
+                font-size: 16px;
+                transition: background 0.3s;
+            }}
+            .dropdown-item:hover {{
+                background: #f8fafc;
+                color: {config["styling"]["secondary_color"]};
+            }}
+            .gallery-section {{
+                max-width: 1400px;
+                margin: 40px auto;
+                padding: 0 20px;
+            }}
+            .gallery-container {{
+                position: relative;
+                width: 100%;
+                height: 500px;
+                overflow: hidden;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                background: {config["styling"]["primary_color"]};
+            }}
+            .gallery-slides {{
+                display: flex;
+                width: 400%;
+                height: 100%;
+                animation: slide 20s infinite;
+            }}
+            .gallery-slide {{
+                width: 25%;
+                height: 100%;
+                flex-shrink: 0;
+                position: relative;
+            }}
+            .gallery-image {{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }}
+            @keyframes slide {{
+                0%, 20% {{ transform: translateX(0); }}
+                25%, 45% {{ transform: translateX(-25%); }}
+                50%, 70% {{ transform: translateX(-50%); }}
+                75%, 95% {{ transform: translateX(-75%); }}
+                100% {{ transform: translateX(0); }}
+            }}
+            .gallery-container:hover .gallery-slides {{
+                animation-play-state: paused;
+            }}
+            .links-section {{
+                max-width: 1400px;
+                margin: 60px auto;
+                padding: 0 20px;
+            }}
+            .links-title {{
+                text-align: center;
+                color: {config["styling"]["primary_color"]};
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_title"]};
+                margin: 0 0 40px 0;
+                font-weight: 600;
+            }}
+            .links-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+            }}
+            .link-box {{
+                background: white;
+                border-radius: 15px;
+                padding: 40px 30px;
+                text-align: center;
+                text-decoration: none;
+                color: {config["styling"]["primary_color"]};
+                transition: all 0.3s;
+                border: 2px solid #e9ecef;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 200px;
+            }}
+            .link-box:hover {{
+                transform: translateY(-10px);
+                border-color: {config["styling"]["secondary_color"]};
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            }}
+            .link-icon {{
+                font-size: 48px;
+                margin-bottom: 20px;
+                color: {config["styling"]["secondary_color"]};
+            }}
+            .link-box h3 {{
+                margin: 0 0 10px 0;
+                font-size: 24px;
+                font-weight: 600;
+            }}
+            .link-box p {{
+                margin: 0;
+                color: #666;
+                font-size: {config["styling"]["font_size_body"]};
+                line-height: 1.5;
+            }}
+            .featured-section {{
+                max-width: 1400px;
+                margin: 60px auto;
+                padding: 0 20px;
+            }}
+            .featured-title {{
+                text-align: center;
+                color: {config["styling"]["primary_color"]};
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_title"]};
+                margin: 0 0 40px 0;
+                font-weight: 600;
+            }}
+            .featured-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 40px;
+            }}
+            .featured-item {{
+                background: white;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                transition: transform 0.3s;
+                border: 2px solid #f0f0f0;
+            }}
+            .featured-item:hover {{
+                transform: translateY(-5px);
+                border-color: {config["styling"]["secondary_color"]};
+            }}
+            .featured-image {{
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+                display: block;
+                background: {config["styling"]["primary_color"]};
+            }}
+            .featured-content {{
+                padding: 25px;
+            }}
+            .featured-content h3 {{
+                margin: 0 0 10px 0;
+                color: {config["styling"]["primary_color"]};
+                font-size: 22px;
+                font-weight: 600;
+            }}
+            .featured-content p {{
+                margin: 0 0 15px 0;
+                color: #666;
+                line-height: 1.6;
+                font-size: 15px;
+            }}
+            .featured-price {{
+                color: {config["styling"]["secondary_color"]};
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0;
+            }}
+            .footer-disclaimer {{
+                background: {config["styling"]["primary_color"]};
+                color: white;
+                padding: 40px 20px;
+                text-align: center;
+                margin-top: 80px;
+                font-size: {config["styling"]["font_size_body"]};
+                border-top: 3px solid {config["styling"]["accent_color"]};
+            }}
+            .footer-disclaimer p {{
+                margin: 10px 0;
+                opacity: 0.95;
+            }}
+            .established {{
+                font-style: italic;
+                color: {config["styling"]["accent_color"]};
+                font-weight: 600;
+                font-size: 18px;
+                margin-top: 15px;
+            }}
+            @media (max-width: 768px) {{
+                .main-nav {{
+                    height: auto;
+                    min-height: 100px;
+                }}
+                .brand-name {{
+                    font-size: 32px;
+                }}
+                .logo-img {{
+                    height: 70px;
+                }}
+                .nav-link {{
+                    padding: 18px 20px;
+                    font-size: 16px;
+                }}
+                .gallery-container {{
+                    height: 300px;
+                }}
+                .links-title, .featured-title {{
+                    font-size: 28px;
+                }}
+                .links-grid, .featured-grid {{
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }}
+                .link-box {{
+                    padding: 30px 20px;
+                    min-height: 180px;
+                }}
+                .link-icon {{
+                    font-size: 40px;
+                }}
+                .link-box h3 {{
+                    font-size: 20px;
+                }}
+                .featured-item {{
+                    max-width: 400px;
+                    margin: 0 auto;
+                }}
+                .featured-image {{
+                    height: 180px;
+                }}
+                .dropdown-menu {{
+                    position: static;
+                    box-shadow: none;
+                    background: {config["styling"]["primary_color"]};
+                    border-radius: 0;
+                    padding: 0;
+                }}
+                .dropdown-item {{
+                    color: white;
+                    padding: 15px 30px;
+                    border-top: 1px solid rgba(255,255,255,0.1);
+                }}
+                .dropdown-item:hover {{
+                    background: rgba(255,255,255,0.1);
+                    color: white;
+                }}
+            }}
+        </style>
+        <link href="{font_url}" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <img src="{config["company"]["logo_path"]}" alt="{config["company"]["name"]}" class="logo-img" onerror="this.style.display='none'">
+                    <a href="/" class="brand-name">{config["company"]["name"]}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link active">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Products ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/catalog" class="dropdown-item">Rods</a>
+                            <a href="/reels" class="dropdown-item">Reels</a>
+                            <a href="/accessories" class="dropdown-item">Accessories</a>
+                            <a href="/apparel" class="dropdown-item">Apparel</a>
+                        </div>
+                    </li>
+                    <li><a href="/contact" class="nav-link">Contact</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <section class="gallery-section">
+            <div class="gallery-container">
+                <div class="gallery-slides">
+                    <div class="gallery-slide">
+                        <img src="{config["homepage"]["gallery1_image"]}" alt="" class="gallery-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1567899378497-8e2cda46648d?w=1200&h=500&fit=crop'; this.alt=''">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="{config["homepage"]["gallery2_image"]}" alt="" class="gallery-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1200&h=500&fit=crop'; this.alt=''">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="{config["homepage"]["gallery3_image"]}" alt="" class="gallery-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1530041539828-114de669390e?w=1200&h=500&fit=crop'; this.alt=''">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="{config["homepage"]["gallery4_image"]}" alt="" class="gallery-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1601512444021-0410c3c7d1b8?w=1200&h=500&fit=crop'; this.alt=''">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="links-section">
+            <h2 class="links-title">Shop By Category</h2>
+            <div class="links-grid">
+                <a href="/catalog" class="link-box">
+                    <div class="link-icon">🎣</div>
+                    <h3>Fishing Rods</h3>
+                    <p>Browse our complete collection of premium fishing rods for all types of fishing</p>
+                </a>
+                <a href="/reels" class="link-box">
+                    <div class="link-icon">🌀</div>
+                    <h3>Fishing Reels</h3>
+                    <p>Spinning, baitcasting, and conventional reels from top brands</p>
+                </a>
+                <a href="/accessories" class="link-box">
+                    <div class="link-icon">🎯</div>
+                    <h3>Tackle & Accessories</h3>
+                    <p>Hooks, lines, lures, and all essential fishing accessories</p>
+                </a>
+                <a href="/apparel" class="link-box">
+                    <div class="link-icon">👕</div>
+                    <h3>Fishing Apparel</h3>
+                    <p>Fishing shirts, hats, waterproof gear and protective clothing</p>
+                </a>
+            </div>
+        </section>
+        
+        <section class="featured-section">
+            <h2 class="featured-title">Featured Products</h2>
+            <div class="featured-grid">
+                <div class="featured-item">
+                    <img src="{config["homepage"]["featured1_image"]}" alt="{config["homepage"]["featured1_title"]}" class="featured-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400&h=250&fit=crop'; this.alt='Fishing Rod'">
+                    <div class="featured-content">
+                        <h3>{config["homepage"]["featured1_title"]}</h3>
+                        <p>{config["homepage"]["featured1_description"]}</p>
+                        <p class="featured-price">{config["homepage"]["featured1_price"]}</p>
+                    </div>
+                </div>
+                <div class="featured-item">
+                    <img src="{config["homepage"]["featured2_image"]}" alt="{config["homepage"]["featured2_title"]}" class="featured-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593811167562-9cef47c2118c?w=400&h=250&fit=crop'; this.alt='Fishing Reel'">
+                    <div class="featured-content">
+                        <h3>{config["homepage"]["featured2_title"]}</h3>
+                        <p>{config["homepage"]["featured2_description"]}</p>
+                        <p class="featured-price">{config["homepage"]["featured2_price"]}</p>
+                    </div>
+                </div>
+                <div class="featured-item">
+                    <img src="{config["homepage"]["featured3_image"]}" alt="{config["homepage"]["featured3_title"]}" class="featured-image" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1584362917165-526a962b8c8c?w=400&h=250&fit=crop'; this.alt='Fishing Rod'">
+                    <div class="featured-content">
+                        <h3>{config["homepage"]["featured3_title"]}</h3>
+                        <p>{config["homepage"]["featured3_description"]}</p>
+                        <p class="featured-price">{config["homepage"]["featured3_price"]}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="footer-disclaimer">
+            <p>© 2024 {config["company"]["name"]}. All specifications are subject to availability.</p>
+            <p class="established">Established {config["company"]["established_year"]}</p>
+        </footer>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {{
+                const imageUrls = [
+                    "{config["homepage"]["gallery1_image"]}",
+                    "{config["homepage"]["gallery2_image"]}",
+                    "{config["homepage"]["gallery3_image"]}",
+                    "{config["homepage"]["gallery4_image"]}",
+                    "{config["homepage"]["featured1_image"]}",
+                    "{config["homepage"]["featured2_image"]}",
+                    "{config["homepage"]["featured3_image"]}",
+                    "{config["company"]["logo_path"]}"
+                ];
+                
+                imageUrls.forEach(url => {{
+                    const img = new Image();
+                    img.src = url;
+                }});
+            }});
+        </script>
+    </body>
+    </html>
+    '''
+
+@app.route('/catalog')
+def catalog():
+    """Rods catalog page"""
+    column_order = [
+        'Item Code', 'Brand', 'Model', 'Type', 'Reel type', 'Length', 
+        'Joint Type', 'Power', 'Lure Weight', 'Action', 'Material', 
+        'Guide', 'Reel Seat', 'Price', 'Discount', 'CR', 'GV', 
+        'Warranty', 'After Discount', 'Final Price'
+    ]
+    
+    font_family_url = config["company"]["font_family"].replace(' ', '+')
+    font_url = f"https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family={font_family_url}:ital,wght@0,600;1,600&display=swap"
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{config["company"]["name"]} - Rods</title>
+        <link href="{font_url}" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Inter', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: {config["styling"]["background_color"]};
+            }}
+            .main-nav {{
+                background: {config["styling"]["primary_color"]};
+                padding: 0 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                height: {config["styling"]["nav_height"]};
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }}
+            .nav-container {{
+                max-width: 1400px;
+                margin: 0 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0;
+                height: 100%;
+            }}
+            .logo-area {{
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                height: 100%;
+            }}
+            .logo-img {{
+                height: 100px;
+                width: auto;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+                border-radius: 5px;
+            }}
+            .brand-name {{
+                color: white;
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_nav"]};
+                font-weight: {config["company"]["font_weight"]};
+                font-style: {config["company"]["font_style"]};
+                text-decoration: none;
+                letter-spacing: 1px;
+                text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            }}
+            .nav-menu {{
+                display: flex;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                gap: 10px;
+                align-items: center;
+            }}
+            .nav-link {{
+                color: white;
+                text-decoration: none;
+                padding: 20px 25px;
+                display: block;
+                font-size: {config["styling"]["font_size_body"]};
+                transition: all 0.3s;
+                border-radius: 6px;
+                font-weight: 500;
+            }}
+            .nav-link:hover {{
+                background: rgba(255,255,255,0.15);
+            }}
+            .nav-link.active {{
+                background: {config["styling"]["secondary_color"]};
+                font-weight: 600;
+            }}
+            .dropdown {{
+                position: relative;
+            }}
+            .dropdown-menu {{
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background: white;
+                min-width: 200px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                border-radius: 8px;
+                padding: 10px 0;
+                z-index: 1000;
+            }}
+            .dropdown:hover .dropdown-menu {{
+                display: block;
+            }}
+            .dropdown-item {{
+                display: block;
+                padding: 12px 20px;
+                color: {config["styling"]["primary_color"]};
+                text-decoration: none;
+                font-size: 16px;
+                transition: background 0.3s;
+            }}
+            .dropdown-item:hover {{
+                background: #f8fafc;
+                color: {config["styling"]["secondary_color"]};
+            }}
+            .dropdown-item.active {{
+                background: {config["styling"]["secondary_color"]};
+                color: white;
+            }}
+            .catalog-header {{
+                max-width: 1400px;
+                margin: 40px auto;
+                padding: 0 20px;
+            }}
+            .catalog-title {{
+                text-align: center;
+                color: {config["styling"]["primary_color"]};
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_title"]};
+                margin: 0 0 30px 0;
+                font-weight: 600;
+            }}
+            .control-bar {{
+                max-width: 1400px;
+                margin: 0 auto 20px auto;
+                padding: 0 20px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }}
+            .search-input {{
+                flex: 1;
+                padding: 14px 20px;
+                border: 2px solid #e1e7f0;
+                border-radius: 8px;
+                font-size: 16px;
+                font-family: 'Inter', sans-serif;
+                box-sizing: border-box;
+            }}
+            .search-input:focus {{
+                outline: none;
+                border-color: {config["styling"]["secondary_color"]};
+                box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.1);
+            }}
+            .filter-toggle-btn {{
+                padding: 14px 24px;
+                border: none;
+                border-radius: 8px;
+                background: {config["styling"]["secondary_color"]};
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: 'Inter', sans-serif;
+                font-size: 15px;
+            }}
+            .clear-btn {{
+                padding: 14px 24px;
+                border: none;
+                border-radius: 8px;
+                background: #6c757d;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: 'Inter', sans-serif;
+                font-size: 15px;
+            }}
+            .filters-grid {{
+                max-width: 1400px;
+                margin: 0 auto 20px auto;
+                padding: 0 20px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }}
+            .filters-grid.hidden {{
+                display: none;
+            }}
+            .filter-box {{
+                background: white;
+                border-radius: 8px;
+                border: 1px solid #e1e7f0;
+                overflow: hidden;
+            }}
+            .filter-box.collapsed .filter-options {{
+                display: none;
+            }}
+            .filter-title {{
+                padding: 15px 20px;
+                background: #f8fafc;
+                border-bottom: 1px solid #e1e7f0;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: 600;
+                color: {config["styling"]["primary_color"]};
+            }}
+            .filter-count {{
+                color: #666;
+                font-weight: normal;
+                font-size: 14px;
+            }}
+            .filter-arrow {{
+                transition: transform 0.3s;
+            }}
+            .filter-box.collapsed .filter-arrow {{
+                transform: rotate(-90deg);
+            }}
+            .filter-options {{
+                max-height: 200px;
+                overflow-y: auto;
+                padding: 15px;
+            }}
+            .filter-option {{
+                display: block;
+                padding: 8px 0;
+                cursor: pointer;
+            }}
+            .filter-option input {{
+                margin-right: 10px;
+            }}
+            .catalog-container {{
+                max-width: 1400px;
+                margin: 0 auto 60px auto;
+                padding: 0 20px;
+            }}
+            .table-wrapper {{
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                background: white;
+                overflow: hidden;
+            }}
+            .table-container {{
+                overflow: auto;
+                max-height: 600px;
+            }}
+            .product-table {{
+                width: auto;
+                min-width: 100%;
+                border-collapse: collapse;
+                font-size: 14px;
+            }}
+            .product-table thead {{
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }}
+            .product-table th {{
+                background: {config["styling"]["primary_color"]};
+                color: white;
+                padding: 16px 12px;
+                text-align: left;
+                font-weight: 600;
+                white-space: nowrap;
+                border-bottom: 2px solid {config["styling"]["secondary_color"]};
+                position: sticky;
+                top: 0;
+            }}
+            .product-table th:nth-child(1) {{ width: 100px; }}
+            .product-table th:nth-child(2) {{ width: 120px; }}
+            .product-table th:nth-child(3) {{ width: 200px; }}
+            .product-table th:nth-child(4) {{ width: 100px; }}
+            .product-table th:nth-child(5) {{ width: 100px; }}
+            .product-table th:nth-child(6) {{ width: 100px; }}
+            .product-table th:nth-child(7) {{ width: 100px; }}
+            .product-table th:nth-child(8) {{ width: 100px; }}
+            .product-table th:nth-child(9) {{ width: 120px; }}
+            .product-table th:nth-child(10) {{ width: 100px; }}
+            .product-table th:nth-child(11) {{ width: 120px; }}
+            .product-table th:nth-child(12) {{ width: 100px; }}
+            .product-table th:nth-child(13) {{ width: 120px; }}
+            .product-table th:nth-child(14) {{ width: 100px; }}
+            .product-table th:nth-child(15) {{ width: 100px; }}
+            .product-table th:nth-child(16) {{ width: 80px; }}
+            .product-table th:nth-child(17) {{ width: 80px; }}
+            .product-table th:nth-child(18) {{ width: 100px; }}
+            .product-table th:nth-child(19) {{ width: 120px; }}
+            .product-table th:nth-child(20) {{ width: 120px; }}
+            .product-table td {{
+                padding: 12px 12px;
+                border-bottom: 1px solid #e9ecef;
+                color: {config["styling"]["text_color"]};
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }}
+            .product-table td:nth-child(1) {{ width: 100px; }}
+            .product-table td:nth-child(2) {{ width: 120px; }}
+            .product-table td:nth-child(3) {{ width: 200px; }}
+            .product-table td:nth-child(4) {{ width: 100px; }}
+            .product-table td:nth-child(5) {{ width: 100px; }}
+            .product-table td:nth-child(6) {{ width: 100px; }}
+            .product-table td:nth-child(7) {{ width: 100px; }}
+            .product-table td:nth-child(8) {{ width: 100px; }}
+            .product-table td:nth-child(9) {{ width: 120px; }}
+            .product-table td:nth-child(10) {{ width: 100px; }}
+            .product-table td:nth-child(11) {{ width: 120px; }}
+            .product-table td:nth-child(12) {{ width: 100px; }}
+            .product-table td:nth-child(13) {{ width: 120px; }}
+            .product-table td:nth-child(14) {{ width: 100px; }}
+            .product-table td:nth-child(15) {{ width: 100px; }}
+            .product-table td:nth-child(16) {{ width: 80px; }}
+            .product-table td:nth-child(17) {{ width: 80px; }}
+            .product-table td:nth-child(18) {{ width: 100px; }}
+            .product-table td:nth-child(19) {{ width: 120px; }}
+            .product-table td:nth-child(20) {{ width: 120px; }}
+            .product-table tr:hover {{
+                background-color: #f8f9fa;
+            }}
+            .footer-disclaimer {{
+                background: {config["styling"]["primary_color"]};
+                color: white;
+                padding: 40px 20px;
+                text-align: center;
+                margin-top: 80px;
+                font-size: {config["styling"]["font_size_body"]};
+                border-top: 3px solid {config["styling"]["accent_color"]};
+            }}
+            .footer-disclaimer p {{
+                margin: 10px 0;
+                opacity: 0.95;
+            }}
+            .established {{
+                font-style: italic;
+                color: {config["styling"]["accent_color"]};
+                font-weight: 600;
+                font-size: 18px;
+                margin-top: 15px;
+            }}
+            @media (max-width: 768px) {{
+                .main-nav {{
+                    height: auto;
+                    min-height: 100px;
+                }}
+                .brand-name {{
+                    font-size: 32px;
+                }}
+                .logo-img {{
+                    height: 70px;
+                }}
+                .nav-link {{
+                    padding: 18px 20px;
+                    font-size: 16px;
+                }}
+                .dropdown-menu {{
+                    position: static;
+                    box-shadow: none;
+                    background: {config["styling"]["primary_color"]};
+                    border-radius: 0;
+                    padding: 0;
+                }}
+                .dropdown-item {{
+                    color: white;
+                    padding: 15px 30px;
+                    border-top: 1px solid rgba(255,255,255,0.1);
+                }}
+                .dropdown-item:hover {{
+                    background: rgba(255,255,255,0.1);
+                    color: white;
+                }}
+                .catalog-title {{
+                    font-size: 28px;
+                }}
+                .control-bar {{
+                    flex-direction: column;
+                    gap: 10px;
+                }}
+                .search-input, .filter-toggle-btn, .clear-btn {{
+                    width: 100%;
+                }}
+                .filters-grid {{
+                    grid-template-columns: 1fr;
+                    gap: 15px;
+                }}
+                .table-container {{
+                    max-height: 500px;
+                }}
+                .product-table th, .product-table td {{
+                    font-size: 12px;
+                    padding: 10px 8px;
+                }}
+                .product-table th:nth-child(1), .product-table td:nth-child(1) {{ width: 80px; }}
+                .product-table th:nth-child(2), .product-table td:nth-child(2) {{ width: 90px; }}
+                .product-table th:nth-child(3), .product-table td:nth-child(3) {{ width: 150px; }}
+                .product-table th:nth-child(4), .product-table td:nth-child(4) {{ width: 70px; }}
+                .product-table th:nth-child(5), .product-table td:nth-child(5) {{ width: 80px; }}
+                .product-table th:nth-child(6), .product-table td:nth-child(6) {{ width: 70px; }}
+                .product-table th:nth-child(7), .product-table td:nth-child(7) {{ width: 80px; }}
+                .product-table th:nth-child(8), .product-table td:nth-child(8) {{ width: 80px; }}
+                .product-table th:nth-child(9), .product-table td:nth-child(9) {{ width: 90px; }}
+                .product-table th:nth-child(10), .product-table td:nth-child(10) {{ width: 80px; }}
+                .product-table th:nth-child(11), .product-table td:nth-child(11) {{ width: 90px; }}
+                .product-table th:nth-child(12), .product-table td:nth-child(12) {{ width: 70px; }}
+                .product-table th:nth-child(13), .product-table td:nth-child(13) {{ width: 90px; }}
+                .product-table th:nth-child(14), .product-table td:nth-child(14) {{ width: 80px; }}
+                .product-table th:nth-child(15), .product-table td:nth-child(15) {{ width: 80px; }}
+                .product-table th:nth-child(16), .product-table td:nth-child(16) {{ width: 60px; }}
+                .product-table th:nth-child(17), .product-table td:nth-child(17) {{ width: 60px; }}
+                .product-table th:nth-child(18), .product-table td:nth-child(18) {{ width: 80px; }}
+                .product-table th:nth-child(19), .product-table td:nth-child(19) {{ width: 100px; }}
+                .product-table th:nth-child(20), .product-table td:nth-child(20) {{ width: 100px; }}
+            }}
+        </style>
+    </head>
+    <body>
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <img src="{config["company"]["logo_path"]}" alt="{config["company"]["name"]}" class="logo-img" onerror="this.style.display='none'">
+                    <a href="/" class="brand-name">{config["company"]["name"]}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Products ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/catalog" class="dropdown-item active">Rods</a>
+                            <a href="/reels" class="dropdown-item">Reels</a>
+                            <a href="/accessories" class="dropdown-item">Accessories</a>
+                            <a href="/apparel" class="dropdown-item">Apparel</a>
+                        </div>
+                    </li>
+                    <li><a href="/contact" class="nav-link">Contact</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <section class="catalog-header">
+            <h2 class="catalog-title">Rods</h2>
+        </section>
+
+        <div class="control-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search rods by brand, model, type, etc..." oninput="filterTable()">
+            <button class="filter-toggle-btn" onclick="toggleFilters()"><span>🔍</span> Filters</button>
+            <button class="clear-btn" onclick="clearAllFilters()"><span>✕</span> Clear</button>
+        </div>
+
+        <div id="filtersGrid" class="filters-grid hidden">
+            <div id="filtersCol1"></div>
+            <div id="filtersCol2"></div>
+        </div>
+
+        <div class="catalog-container">
+            <div class="table-wrapper">
+                <div class="table-container">
+                    <table class="product-table">
+                        <thead>
+                            <tr id="tableHeader">
+                                {''.join(f'<th>{column}</th>' for column in column_order)}
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer-disclaimer">
+            <p>© 2024 {config["company"]["name"]}. All specifications are subject to availability.</p>
+            <p class="established">Established {config["company"]["established_year"]}</p>
+        </footer>
+
+        <script>
+            const API_URL = "/api/rods";
+            let allProducts = [];
+            let filteredProducts = [];
+            let filtersVisible = false;
+            let activeFilters = {{}};
+            
+            document.addEventListener('DOMContentLoaded', loadCatalog);
+            
+            async function loadCatalog() {{
+                try {{
+                    const response = await fetch(API_URL);
+                    const result = await response.json();
+                    
+                    if (result.status === 'error') {{
+                        console.error("Error loading rods:", result.message);
+                        return;
+                    }}
+                    
+                    allProducts = result.data || [];
+                    
+                    if (allProducts.length === 0) {{
+                        document.getElementById('tableBody').innerHTML = '<tr><td colspan="20" style="text-align: center; padding: 50px;">No rods found</td></tr>';
+                        return;
+                    }}
+                    
+                    const nonEmptyProducts = allProducts.filter(product => !isRowEmpty(product));
+                    
+                    if (nonEmptyProducts.length === 0) {{
+                        document.getElementById('tableBody').innerHTML = '<tr><td colspan="20" style="text-align: center; padding: 50px;">No valid rods found</td></tr>';
+                        return;
+                    }}
+                    
+                    allProducts = nonEmptyProducts;
+                    filteredProducts = [...allProducts];
+                    
+                    populateTable();
+                    populateFilters();
+                    
+                }} catch (error) {{
+                    console.error('Error:', error);
+                }}
+            }}
+            
+            function isRowEmpty(rod) {{
+                const values = Object.values(rod);
+                return values.every(v => {{
+                    if (v === null || v === undefined) return true;
+                    const strValue = String(v).trim().toLowerCase();
+                    if (strValue === '') return true;
+                    if (strValue === '0') return true;
+                    if (strValue === 'null') return true;
+                    if (strValue === 'nan') return true;
+                    if (strValue === '-') return true;
+                    if (strValue === 'n/a') return true;
+                    return false;
+                }});
+            }}
+            
+            function toggleFilters() {{
+                filtersVisible = !filtersVisible;
+                const grid = document.getElementById('filtersGrid');
+                const button = document.querySelector('.filter-toggle-btn');
+                grid.classList.toggle('hidden');
+                button.innerHTML = filtersVisible ? '<span>▲</span> Hide Filters' : '<span>🔍</span> Filters';
+            }}
+            
+            function populateFilters() {{
+                const filterColumns = ['Brand', 'Type', 'Power', 'Action', 'Length', 'Material', 'Reel type'];
+                filterColumns.forEach((column, index) => {{
+                    const values = new Set();
+                    allProducts.forEach(product => {{
+                        const value = product[column];
+                        if (value !== undefined && value !== null && String(value).trim() !== '') {{
+                            values.add(String(value).trim());
+                        }}
+                    }});
+                    if (values.size === 0) return;
+                    const sortedValues = [...values].sort();
+                    const filterBox = document.createElement('div');
+                    filterBox.className = 'filter-box collapsed';
+                    filterBox.innerHTML = `
+                        <div class="filter-title" onclick="toggleFilterBox(this)">
+                            <span>${{column}} <span class="filter-count">(${{values.size}})</span></span>
+                            <span class="filter-arrow">▼</span>
+                        </div>
+                        <div class="filter-options">
+                            ${{sortedValues.map(value => `
+                                <label class="filter-option">
+                                    <input type="checkbox" data-column="${{column}}" value="${{escapeHtml(value).replace(/"/g, '&quot;')}}" onchange="updateActiveFilters()">
+                                    <span>${{escapeHtml(value)}}</span>
+                                </label>
+                            `).join('')}}
+                        </div>
+                    `;
+                    if (index % 2 === 0) {{
+                        document.getElementById('filtersCol1').appendChild(filterBox);
+                    }} else {{
+                        document.getElementById('filtersCol2').appendChild(filterBox);
+                    }}
+                }});
+            }}
+            
+            function toggleFilterBox(element) {{
+                element.parentElement.classList.toggle('collapsed');
+            }}
+            
+            function updateActiveFilters() {{
+                activeFilters = {{}};
+                document.querySelectorAll('.filter-options input:checked').forEach(checkbox => {{
+                    const column = checkbox.getAttribute('data-column');
+                    const value = checkbox.value;
+                    if (!activeFilters[column]) {{
+                        activeFilters[column] = [];
+                    }}
+                    if (!activeFilters[column].includes(value)) {{
+                        activeFilters[column].push(value);
+                    }}
+                }});
+                filterTable();
+            }}
+            
+            function clearAllFilters() {{
+                document.querySelectorAll('.filter-options input[type="checkbox"]').forEach(cb => {{
+                    cb.checked = false;
+                }});
+                document.getElementById('searchInput').value = '';
+                activeFilters = {{}};
+                filteredProducts = [...allProducts];
+                populateTable();
+                const clearBtn = document.querySelector('.clear-btn');
+                const originalHTML = clearBtn.innerHTML;
+                clearBtn.innerHTML = '<span>✓</span> Cleared!';
+                clearBtn.style.background = '#28a745';
+                setTimeout(() => {{
+                    clearBtn.innerHTML = originalHTML;
+                    clearBtn.style.background = '';
+                }}, 1500);
+            }}
+            
+            function filterTable() {{
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+                filteredProducts = allProducts.filter(product => {{
+                    if (searchTerm) {{
+                        const searchMatch = Object.values(product).some(value => {{
+                            if (value === undefined || value === null) return false;
+                            return String(value).toLowerCase().includes(searchTerm);
+                        }});
+                        if (!searchMatch) return false;
+                    }}
+                    for (const [column, selectedValues] of Object.entries(activeFilters)) {{
+                        if (selectedValues.length > 0) {{
+                            const cellValue = String(product[column] || '').toLowerCase().trim();
+                            const matches = selectedValues.some(v => cellValue === v.toLowerCase().trim());
+                            if (!matches) return false;
+                        }}
+                    }}
+                    return true;
+                }});
+                populateTable();
+            }}
+            
+            function populateTable() {{
+                const tableBody = document.getElementById('tableBody');
+                const columnOrder = [
+                    'Item Code', 'Brand', 'Model', 'Type', 'Reel type', 'Length', 
+                    'Joint Type', 'Power', 'Lure Weight', 'Action', 'Material', 
+                    'Guide', 'Reel Seat', 'Price', 'Discount', 'CR', 'GV', 
+                    'Warranty', 'After Discount', 'Final Price'
+                ];
+                if (filteredProducts.length === 0) {{
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="20" style="text-align: center; padding: 50px; color: #666;">
+                                No rods match your search
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }}
+                tableBody.innerHTML = filteredProducts.map(product => {{
+                    return `<tr>
+                        ${{columnOrder.map(column => {{
+                            let value = product[column] || '';
+                            return `<td title="${{escapeHtml(String(value).trim())}}">${{escapeHtml(String(value).trim())}}</td>`;
+                        }}).join('')}}
+                    </tr>`;
+                }}).join('');
+            }}
+            
+            function escapeHtml(text) {{
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }}
+        </script>
+    </body>
+    </html>
+    '''
+
+@app.route('/rods')
+def rods():
+    """Alias for catalog"""
+    return catalog()
+
+# Simplified other pages (reels, accessories, apparel, contact, about)
+# These follow the same pattern but are shortened for brevity
+
+@app.route('/reels')
+def reels():
+    """Reels page"""
+    font_family_url = config["company"]["font_family"].replace(' ', '+')
+    font_url = f"https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family={font_family_url}:ital,wght@0,600;1,600&display=swap"
+    
+    return f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{config["company"]["name"]} - Reels</title>
+        <link href="{font_url}" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Inter', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: {config["styling"]["background_color"]};
+            }}
+            .main-nav {{ background: {config["styling"]["primary_color"]}; height: {config["styling"]["nav_height"]}; }}
+            .brand-name {{
+                color: white;
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_nav"]};
+                font-weight: {config["company"]["font_weight"]};
+                font-style: {config["company"]["font_style"]};
+            }}
+            .nav-link.active {{ background: {config["styling"]["secondary_color"]}; }}
+            .content {{ max-width: 1400px; margin: 100px auto; padding: 0 20px; text-align: center; }}
+            .content h1 {{ color: {config["styling"]["primary_color"]}; font-family: '{config["company"]["font_family"]}', serif; }}
+            .footer-disclaimer {{ background: {config["styling"]["primary_color"]}; border-top: 3px solid {config["styling"]["accent_color"]}; }}
+            .established {{ color: {config["styling"]["accent_color"]}; }}
+        </style>
+    </head>
+    <body>
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <img src="{config["company"]["logo_path"]}" alt="{config["company"]["name"]}" class="logo-img" onerror="this.style.display='none'">
+                    <a href="/" class="brand-name">{config["company"]["name"]}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Products ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/catalog" class="dropdown-item">Rods</a>
+                            <a href="/reels" class="dropdown-item active">Reels</a>
+                            <a href="/accessories" class="dropdown-item">Accessories</a>
+                            <a href="/apparel" class="dropdown-item">Apparel</a>
+                        </div>
+                    </li>
+                    <li><a href="/contact" class="nav-link">Contact</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="content">
+            <h1>Fishing Reels</h1>
+            <p>Our premium collection of fishing reels is coming soon!</p>
+        </div>
+        
+        <footer class="footer-disclaimer">
+            <p>© 2024 {config["company"]["name"]}. All specifications are subject to availability.</p>
+            <p class="established">Established {config["company"]["established_year"]}</p>
+        </footer>
+    </body>
+    </html>
+    '''
+
+@app.route('/accessories')
+def accessories():
+    """Accessories page"""
+    return reels().replace('Reels', 'Accessories').replace('fishing reels', 'fishing accessories')
+
+@app.route('/apparel')
+def apparel():
+    """Apparel page"""
+    return reels().replace('Reels', 'Apparel').replace('fishing reels', 'fishing apparel')
+
+@app.route('/contact')
+def contact():
+    """Contact page"""
+    font_family_url = config["company"]["font_family"].replace(' ', '+')
+    font_url = f"https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family={font_family_url}:ital,wght@0,600;1,600&display=swap"
+    
+    return f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{config["company"]["name"]} - Contact</title>
+        <link href="{font_url}" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Inter', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: {config["styling"]["background_color"]};
+            }}
+            .main-nav {{ background: {config["styling"]["primary_color"]}; height: {config["styling"]["nav_height"]}; }}
+            .brand-name {{
+                color: white;
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_nav"]};
+                font-weight: {config["company"]["font_weight"]};
+                font-style: {config["company"]["font_style"]};
+            }}
+            .nav-link.active {{ background: {config["styling"]["secondary_color"]}; }}
+            .content {{ max-width: 800px; margin: 100px auto; padding: 0 20px; }}
+            .content h1 {{ color: {config["styling"]["primary_color"]}; font-family: '{config["company"]["font_family"]}', serif; text-align: center; }}
+            .contact-info {{ background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }}
+            .contact-item {{ margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #e9ecef; }}
+            .contact-item:last-child {{ margin-bottom: 0; padding-bottom: 0; border-bottom: none; }}
+            .contact-item h3 {{ color: {config["styling"]["primary_color"]}; margin: 0 0 10px 0; }}
+            .footer-disclaimer {{ background: {config["styling"]["primary_color"]}; border-top: 3px solid {config["styling"]["accent_color"]}; }}
+            .established {{ color: {config["styling"]["accent_color"]}; }}
+        </style>
+    </head>
+    <body>
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <img src="{config["company"]["logo_path"]}" alt="{config["company"]["name"]}" class="logo-img" onerror="this.style.display='none'">
+                    <a href="/" class="brand-name">{config["company"]["name"]}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Products ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/catalog" class="dropdown-item">Rods</a>
+                            <a href="/reels" class="dropdown-item">Reels</a>
+                            <a href="/accessories" class="dropdown-item">Accessories</a>
+                            <a href="/apparel" class="dropdown-item">Apparel</a>
+                        </div>
+                    </li>
+                    <li><a href="/contact" class="nav-link active">Contact</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="content">
+            <h1>Contact Us</h1>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>Store Address</h3>
+                    <p>{config["contact"]["address_line1"]}<br>{config["contact"]["address_line2"]}<br>{config["contact"]["address_line3"]}</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Phone Number</h3>
+                    <p>{config["contact"]["phone"]}</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Email Address</h3>
+                    <p>{config["contact"]["email"]}</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Business Hours</h3>
+                    <p>Monday - Friday: {config["contact"]["hours_mon_fri"]}<br>Saturday: {config["contact"]["hours_sat"]}<br>Sunday: {config["contact"]["hours_sun"]}</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer-disclaimer">
+            <p>© 2024 {config["company"]["name"]}. All specifications are subject to availability.</p>
+            <p class="established">Established {config["company"]["established_year"]}</p>
+        </footer>
+    </body>
+    </html>
+    '''
+
+@app.route('/about')
+def about():
+    """About page"""
+    font_family_url = config["company"]["font_family"].replace(' ', '+')
+    font_url = f"https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family={font_family_url}:ital,wght@0,600;1,600&display=swap"
+    
+    return f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{config["company"]["name"]} - About</title>
+        <link href="{font_url}" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Inter', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: {config["styling"]["background_color"]};
+            }}
+            .main-nav {{ background: {config["styling"]["primary_color"]}; height: {config["styling"]["nav_height"]}; }}
+            .brand-name {{
+                color: white;
+                font-family: '{config["company"]["font_family"]}', serif;
+                font-size: {config["styling"]["font_size_nav"]};
+                font-weight: {config["company"]["font_weight"]};
+                font-style: {config["company"]["font_style"]};
+            }}
+            .nav-link.active {{ background: {config["styling"]["secondary_color"]}; }}
+            .content {{ max-width: 800px; margin: 100px auto; padding: 0 20px; }}
+            .content h1 {{ color: {config["styling"]["primary_color"]}; font-family: '{config["company"]["font_family"]}', serif; text-align: center; }}
+            .about-section {{ background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); line-height: 1.8; color: #555; }}
+            .highlight {{ color: {config["styling"]["primary_color"]}; font-weight: 600; }}
+            .footer-disclaimer {{ background: {config["styling"]["primary_color"]}; border-top: 3px solid {config["styling"]["accent_color"]}; }}
+            .established {{ color: {config["styling"]["accent_color"]}; }}
+        </style>
+    </head>
+    <body>
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="logo-area">
+                    <img src="{config["company"]["logo_path"]}" alt="{config["company"]["name"]}" class="logo-img" onerror="this.style.display='none'">
+                    <a href="/" class="brand-name">{config["company"]["name"]}</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Products ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="/catalog" class="dropdown-item">Rods</a>
+                            <a href="/reels" class="dropdown-item">Reels</a>
+                            <a href="/accessories" class="dropdown-item">Accessories</a>
+                            <a href="/apparel" class="dropdown-item">Apparel</a>
+                        </div>
+                    </li>
+                    <li><a href="/contact" class="nav-link">Contact</a></li>
+                    <li><a href="/about" class="nav-link active">About</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="content">
+            <h1>About {config["company"]["name"]}</h1>
+            <div class="about-section">
+                <p><span class="highlight">{config["company"]["name"]}</span> was established in {config["company"]["established_year"]} with a simple mission: to provide anglers with the highest quality fishing equipment available.</p>
+                <p>We're dedicated to sourcing the finest rods, reels, and fishing accessories from renowned brands worldwide. Our expertise comes from years of hands-on experience - we're not just sellers, we're passionate anglers.</p>
+                <p>Our commitment extends beyond just selling products. We believe in building lasting relationships with our customers by offering expert advice and reliable service.</p>
+                <p>At <span class="highlight">{config["company"]["name"]}</span>, we're proud to be part of the fishing community and look forward to serving generations of anglers to come.</p>
+            </div>
+        </div>
+        
+        <footer class="footer-disclaimer">
+            <p>© 2024 {config["company"]["name"]}. All specifications are subject to availability.</p>
+            <p class="established">Established {config["company"]["established_year"]}</p>
+        </footer>
+    </body>
+    </html>
+    '''
+
+@app.route('/api/rods')
+def api_rods():
+    """API endpoint for rods data"""
+    data = load_rods_data()
+    
+    if isinstance(data, dict) and "error" in data:
+        return jsonify({
+            "status": "error",
+            "message": data["error"],
+            "timestamp": time.time(),
+            "cached": _data_cache is not None
+        }), 500
+    else:
+        ordered_data = []
+        for rod in data:
+            ordered_rod = {}
+            for column in [
+                'Item Code', 'Brand', 'Model', 'Type', 'Reel type', 'Length', 
+                'Joint Type', 'Power', 'Lure Weight', 'Action', 'Material', 
+                'Guide', 'Reel Seat', 'Price', 'Discount', 'CR', 'GV', 
+                'Warranty', 'After Discount', 'Final Price'
+            ]:
+                ordered_rod[column] = rod.get(column, '')
+            ordered_data.append(ordered_rod)
+        
+        return jsonify({
+            "status": "success",
+            "count": len(ordered_data),
+            "timestamp": time.time(),
+            "cached": time.time() - _cache_time < CACHE_DURATION if _cache_time else False,
+            "columns": [
+                'Item Code', 'Brand', 'Model', 'Type', 'Reel type', 'Length', 
+                'Joint Type', 'Power', 'Lure Weight', 'Action', 'Material', 
+                'Guide', 'Reel Seat', 'Price', 'Discount', 'CR', 'GV', 
+                'Warranty', 'After Discount', 'Final Price'
+            ],
+            "data": ordered_data
+        })
+
+@app.route('/health')
+def health():
+    """Health check"""
+    data = load_rods_data()
+    
+    if isinstance(data, dict) and "error" in data:
+        return jsonify({
+            "status": "unhealthy",
+            "error": data["error"],
+            "timestamp": time.time()
+        }), 500
+    else:
+        return jsonify({
+            "status": "healthy",
+            "rod_count": len(data),
+            "cache_age": time.time() - _cache_time if _cache_time else None,
+            "timestamp": time.time()
+        })
+
+if __name__ == '__main__':
+    # Create necessary folders
+    Path("static/images/gallery").mkdir(parents=True, exist_ok=True)
+    Path("static/images/featured").mkdir(parents=True, exist_ok=True)
+    Path("config").mkdir(exist_ok=True)
+    
+    port = 5000
+    app.run(debug=True, port=port, host='0.0.0.0')
