@@ -8,7 +8,7 @@
 393564,Lemax,River Monster,Casting,Spinning,5',2PCS,6 - 12 LB,Medium,0,Fast,Graphite,Normal,Normal,0,0
 843141,Bullzen,Dark Fire,Casting,Spinning,5',2PCS,6 - 12 LB,Medium,0,Moderate - Fast,0,Normal,Normal,0,0
 393572,Lemax,Raptor-X,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Fast,0,SiC,Normal,0,0
-393565,Lemax,River Monster,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Fast,0,Normal,Normal,0,0
+393565,Lemax,River Monster,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Fast,0,Normal,Normal,0,-1
 543895,Shimano,FX,Casting,Spinning,"5'6""",2PCS,6 - 14 LB,Medium,0,Moderate - Fast,Aeroglass,Normal,Normal,0,0
 863048,Extend,Shark 13,Casting,Spinning,"5'6""",2PCS,5 - 12 LB,Medium,0,Fast,Carbon,Fuji,Fuji,3M,0
 863167,Extend,Shark 12,Casting,Spinning,"5'6""",2PCS,4 - 12 LB,Medium,0,Fast,Carbon,Fuji,Fuji,3M,0
@@ -17,14 +17,14 @@
 393277,Lemax,Pro Tiny,Casting,Spinning,"5'6""",2PCS,4 - 10 LB,Light,0,Moderate - Fast,Graphite,Normal,Normal,0,0
 393242,Lemax,Platinum Gold Medal,Casting,Spinning,"5'6""",2PCS,4 - 10 LB,Light,0,Moderate - Fast,Graphite,Normal,Normal,0,0
 2,Ugly Stik,GX2 USG XSP,Casting,Spinning,"5'6""",2PCS,4 - 10 LB,Light,0,Slow - Moderate,Carbon,Normal,Normal,0,0
-843095,Bullzen,Zeus,Casting,Spinning,5',2PCS,12 - 25 LB,Medium Heavy,0,Fast,0,Fuji,Fuji,0,0
+843095,Bullzen,Zeus,Casting,Spinning,5',2PCS,12 - 25 LB,Medium Heavy,0,Fast,0,Fuji,Fuji,0,1
 103565,Seahawk,Power Seven,Casting,Spinning,5',2PCS,8 - 17 LB,Medium,0,Fast,0,Normal,Normal,0,0
 843134,Bullzen,Camo Blade XLE,Casting,Spinning,5',2PCS,6 - 12 LB,Medium,0,Fast,0,Normal,Normal,0,0
 103565,Seahawk,Power Seven,Casting,Spinning,5',2PCS,8 - 17 LB,Medium,0,Moderate - Fast,0,Normal,Normal,0,0
 103611,Seahawk,Blazer,Casting,Spinning,"5'6""",2PCS,5 - 12 LB,Medium,0,Fast,0,Normal,Normal,0,0
 393620,Lemax,Kingmax Extreme,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Fast,0,Normal,Normal,0,0
 393462,Lemax,Royal President,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Moderate - Fast,Graphite,Normal,Normal,0,0
-393444,Lemax,Star President,Casting,Spinning,"6'2""",2PCS,6 - 12 LB,Medium,0,Moderate - Fast,Graphite,Fuji,Fuji,0,0
+393444,Lemax,Star President,Casting,Spinning,"6'2""",2PCS,6 - 12 LB,Medium,0,Moderate - Fast,Graphite,Fuji,Fuji,0,1
 393502,Lemax,Spy Game,Casting,Spinning,"5'6""",2PCS,6 - 15 LB,Medium,0,Moderate,Graphite,Normal,Normal,0,0
 303038,Expert Graphite,Kingston,Casting,Spinning,"5'6""",2PCS,8 - 15 LB,Medium,0,Moderate,Carbon,Fuji,Fuji,0,0
 393482,Lemax,Red Diamond,Casting,Spinning,"5'6""",2PCS,7 - 14 LB,Medium,0,Moderate - Fast,Graphite,Normal,Normal,0,0
@@ -57,11 +57,11 @@
 863054,Extend,Blue 70 Series,Casting,Spinning,6',2PCS,1 - 3 LB,Medium Heavy,7-23G,Fast,Carbon,Fuji,Fuji,3M,0
 863055,Extend,Blue 70 Series,Casting,Spinning,6',2PCS,2 - 4 LB,Medium Heavy,8-36G,Fast,Carbon,Fuji,Fuji,3M,0
 863056,Extend,Blue 70 Series,Casting,Spinning,6',2PCS,3 - 5 LB,Heavy,10-38G,Fast,Carbon,Fuji,Fuji,3M,0
-113469,Daiwa,20' Phantom,Casting,Spinning,6',0,20 - 40 LB,Heavy,120G,Fast,Graphite,Fuji,Normal,0,-1
+113469,Daiwa,20' Phantom,Casting,Spinning,6',0,20 - 40 LB,Heavy,120G,Fast,Graphite,Fuji,Normal,0,0
 283699,Relix Nusantara,Jawara Blue Candy,Casting,Spinning,6',0,8 - 17 LB,Medium,7-28G,Fast,Graphite,Fuji,Normal,12M,0
 283700,Relix Nusantara,Jawara Blue Candy,Casting,Spinning,6',0,10 - 20 LB,Medium Heavy,10-35G,Fast,Graphite,Fuji,Normal,12M,0
 283704,Relix Nusantara,Kanera Orange,Jigging/ Bottom,Spinning,"5'6""",0,1 - 2.5 PE,Medium Heavy,7-30G,Fast,Graphite,Fuji,Normal,12M,0
-843096,Bullzen,Zeus,Casting,Spinning,"5'6""",0,12 - 25 LB,Medium Heavy,10-30G,Fast,Carbon,Fuji,Normal,0,0
+843096,Bullzen,Zeus,Casting,Spinning,"5'6""",0,12 - 25 LB,Medium Heavy,10-30G,Fast,Carbon,Fuji,Normal,0,-1
 393242,Lemax,Platinum Gold Medal,Casting,Spinning,"5'6""",0,4 - 10 LB,Light,18G Max,Slow - Moderate,Graphite,Normal,Normal,0,0
 103566,Seahawk,Power Seven,Casting,Spinning,"5'6""",0,8 - 17 LB,Medium,10-25G,Slow - Moderate,Graphite,Normal,Normal,0,0
 263427,Eupro,Tropical,Casting,Spinning,"5'10""",0,8 - 20 LB,Medium Heavy,7-20G,Moderate,Carbon,Normal,Normal,0,0
@@ -324,11 +324,11 @@
 113643,Daiwa,25' Crossfire - X,Casting,BC,"6'6""",2PCS,10 - 20 LB,Medium Heavy,7 - 28G,Fast,Graphite,Titanium,Stainless Steel,0,-1
 393517,Lemax,Raptor - X,Casting,BC,6'3,2PCS,10 - 20 LB,Medium Heavy,12 - 25G,Fast,(Comp),SiC,Normal,0,0
 263480,Eupro,Madness XDR,Casting,BC,"6'6""",2PCS,8 - 15 LB,Medium Light,9 - 20G,Moderate - Fast,Graphite,Normal,Normal,0,0
-843109,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Slow - Moderate,Carbon,Normal,Normal,0,-1
+843109,Bullzen,Hyuga Ragnarok,Single Hand (Casting),BC,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Slow - Moderate,Carbon,Normal,Normal,0,0
 813024,Viper,Tanto,Single Hand (Casting),BC,"5'2""",1PCS,5 - 14 LB,Medium Light,1/10 - 3/7OZ,Fast,Graphite,Normal,Normal,0,0
 393629,Gawas,Team Gawas Finesse,Single Hand (Casting),BC,5',1PCS,3 - 8 LB,Ultra Light,2 - 8G,Fast,Carbon,Fuji,Aluminium,Lifetime,0
 813122,Rodford,Guncast 2,Single Hand (Casting),BC,"5'6""",1PCS,5 - 14 LB,Medium Light,4 - 15G,Fast,Graphite,Zirconia,Fuji,0,0
-283716,Awa-Shima,Full Moon Stick,Single Hand (Casting),BC,5'3,1PCS,5 - 14 LB,Medium Light,4 - 16G,Moderate,Carbon,Normal,Normal,3M,-1
+283716,Awa-Shima,Full Moon Stick,Single Hand (Casting),BC,5'3,1PCS,5 - 14 LB,Medium Light,4 - 16G,Moderate,Carbon,Normal,Normal,3M,0
 283750,Gtech,Giant Shooter,Single Hand (Casting),BC,5'3,1PCS,5 - 14 LB,Medium Light,4 - 16G,Moderate,Carbon,Normal,Aluminium,1M,0
 283749,Gtech,Giant Shooter,Single Hand (Casting),BC,5',1PCS,4 - 12 LB,Medium Light,3 - 14G,Moderate,Carbon,Normal,Aluminium,0,0
 283751,Gtech,Giant Shooter,Single Hand (Casting),BC,"5'6""",1PCS,8 - 16 LB,Medium Light,7 - 21G,Fast,Carbon,Normal,Aluminium,0,0
@@ -350,7 +350,7 @@
 103648,Seahawk,Flexis Lite RX,Casting,Spinning,"6'6""",2PCS,4 - 10 LB,Light,5 - 12G,Extra Fast,Carbon,Fuji,Normal,0,4
 393417,Lemax,Japan Finesse Hunter,Casting,Spinning,"5'6""",BJ,4 - 12 LB,Medium Light,7 - 15G,Moderate,Carbon,Normal,Normal,0,0
 113428,Daiwa,20' Crossfire-X ULG,Casting,Spinning,"5'9""",2PCS,2 - 6 LB,Ultra Light,1.7 - 12G,Fast,Graphite,Titanium,Stainless Steel,0,0
-843164,Bullzen,Hyuga Ragnarok Finesse,Casting,Spinning,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Moderate,Carbon,Normal,Normal,0,0
+843164,Bullzen,Hyuga Ragnarok Finesse,Casting,Spinning,"5'8""",2PCS,2 - 6 LB,Ultra Light,2 - 6G,Moderate,Carbon,Normal,Normal,0,-1
 843170,Bullzen,Hyuga Ragnarok Finesse,Casting,Spinning,"5'8""",2PCS,4 - 10 LB,Light,6 - 14G,Fast,Carbon,Normal,Normal,0,0
 264164,Eupro,Feather Light,Casting,Spinning,6',2PCS,2 - 6 LB,Ultra Light,3 - 8G,Slow - Moderate,Carbon,Fuji,Normal,0,0
 713708,Ugly Stik,GX2-USGXSP,Casting,Spinning,6',2PCS,4 - 10 LB,Light,0,Slow - Moderate,Graphite,Normal,Normal,0,0
@@ -375,77 +375,77 @@
 103647,Seahawk,Flexis Lite RX,Casting,Spinning,6'3,2PCS,3 - 8 LB,Ultra Light,4 - 10G,Fast,Carbon,Fuji,Normal,0,4
 113427,Daiwa,20' Crossfire-X ULG,Casting,Spinning,6'3,2PCS,2 - 6 LB,Ultra Light,1.7 - 12G,Fast,Graphite,Titanium,Stainless Steel,0,0
 283668,Awa-Shima,24' Incomparable Light,Casting,Spinning,6'3,2PCS,2 - 6 LB,Ultra Light,2 - 10G,Slow,Carbon,Normal,Normal,3M,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
+713807,Abu Garcia,20' Ascalon,Casting,BC,6'3,2PCS,4 - 12 LB,Medium Light,5 - 14G,Fast,Carbon,Normal,Normal,0,0
+824124,Rapala,Snow Tiger,Casting,BC,6'3,1PCS,4 - 10 LB,Light,3.5 - 15G,Fast,Graphite,Fuji,Fuji,0,0
+824126,Rapala,Snow Tiger,Casting,BC,6'3,2PCS,4 - 10 LB,Light,3.5 - 14G,Fast,Graphite,Fuji,Fuji,0,0
+263456,Eupro,Aggression,Casting,BC,6'3,2PCS,6 - 12 LB,Medium Light,7 - 15G,Slow - Moderate,(Comp),Normal,Normal,0,0
+383083,Senses,Counterblow V3 Hornet,Casting,BC,6'3,1PCS,6 - 14 LB,Medium,4 - 18G,Fast,Graphite,Fuji,Fuji,0,0
+383084,Senses,Counterblow V3 The Eagle,Casting,BC,"6'4""",1PCS,8 - 16 LB,Medium,6 - 21G,Fast,Graphite,Fuji,Fuji,0,0
+283617,Awa-Shima,Lure Caster,Casting,BC,6'3,2PCS,6 - 16 LB,Medium,8 - 23G,Slow - Moderate,(Comp),SiC,Normal,0,0
+843139,Bullzen,Camo Blade XLE,Casting,BC,6'3,2PCS,10 - 20 LB,Medium Heavy,14 - 35.4G,Moderate,(Comp),Normal,Normal,0,0
+283691,Relix Nusantara,Jabrik XP,Jigging/ Bottom,Spinning,"6'6""",BJ,2   PE,Medium Heavy,150G,Fast,Carbon,Fuji,Fuji,12M,0
+283690,Relix Nusantara,Jabrik XP,Jigging/ Bottom,Spinning,"6'6""",1PCS,1.2   PE,Medium,80G,Slow,Carbon,Fuji,Fuji,12M,0
+283688,Relix Nusantara,Jabrik XP,Jigging/ Bottom,Spinning,"6'6""",2PCS,0.6   PE,Light,20G,Slow,Carbon,Fuji,Fuji,12M,0
+283640,Gtech,Jigging Hunter,Jigging/ Bottom,Spinning,6'3,BJ,1.3   PE,Medium Light,40 - 120G,Moderate,Carbon,Fuji,Aluminium,12M,0
+283646,Gtech,Offshore,Jigging/ Bottom,Spinning,"6'6""",BJ,2.4   PE,Medium Heavy,50 - 180G,Moderate,Carbon,Normal,Aluminium,0,0
+283644,Gtech,Offshore,Jigging/ Bottom,Spinning,6'3,BJ,0.8 - 1.5 PE,Medium Light,20 - 80G,Slow,Carbon,Normal,Aluminium,0,0
+283643,Gtech,Offshore,Jigging/ Bottom,Spinning,6',BJ,0.6 - 1.2 PE,Medium Light,20 - 80G,Slow,Carbon,Normal,Aluminium,0,0
+393286,Lemax,Jurastik,Jigging/ Bottom,Spinning,6',BJ,2 - 6 PE,Heavy,400G,Fast,Carbon,Normal,Normal,0,0
+393398,Lemax,Storm Fire,Jigging/ Bottom,Spinning,6',BJ,2 - 4 PE,Heavy,320G,Moderate,Graphite,Fuji,Normal,0,0
+393397,Lemax,Storm Fire,Jigging/ Bottom,Spinning,6',1PCS,1 - 3 PE,Heavy,250G,Slow,Carbon,Fuji,Normal,0,0
+393399,Lemax,Sorm Fire,Jigging/ Bottom,Spinning,6',1PCS,3 - 5 PE,Heavy,450G,Moderate,Carbon,Fuji,Normal,0,0
+393400,Lemax,Storm Fire,Jigging/ Bottom,Spinning,6',1PCS,0.8 - 2 PE,Medium Heavy,150G,Slow,Carbon,Fuji,Normal,0,0
+393401,Lemax,Storm Fire,Jigging/ Bottom,Spinning,6',1PCS,1 - 3 PE,Heavy,250G,Slow,Carbon,Fuji,Normal,0,0
+393396,Lemax,Storm Fire,Jigging/ Bottom,Spinning,6',1PCS,0.8 - 2 PE,Medium Heavy,150G,Slow,Carbon,Fuji,Normal,0,0
+393524,Lemax,Asian Tiger,Jigging/ Bottom,Spinning,6',BJ,2 - 3 PE,Heavy,60 - 200G,Fast,Carbon,SiC,Normal,0,0
+393525,Lemax,Asian Tiger,Jigging/ Bottom,Spinning,6'3,BJ,2 - 4 PE,Heavy,60 - 230G,Moderate,Carbon,SiC,Normal,0,0
+393519,Lemax,G-Master,Jigging/ Bottom,Spinning,6',1PCS,1 - 3 PE,Heavy,40-120G,Moderate,Carbon,SiC,Fuji,0,0
+393520,Lemax,G-Master,Jigging/ Bottom,Spinning,"6'6""",1PCS,1 - 3 PE,Heavy,50 - 150G,Slow - Moderate,Carbon,SiC,Fuji,0,0
+393217,Lemax,Jurastik,Jigging/ Bottom,Spinning,"6'6""",BJ,3 - 8 PE,Extra Heavy,500G,Fast,Carbon,Normal,Normal,0,0
+393563,Lemax,Jaguar Max,Jigging/ Bottom,Spinning,"6'6""",BJ,3 - 6 PE,Heavy,350G,Moderate - Fast,Aeroglass,Normal,Normal,0,0
+393562,Lemax,Jaguar Max,Jigging/ Bottom,Spinning,6',BJ,2 - 5 PE,Heavy,260G,Slow,Aeroglass,Normal,Normal,0,0
+393491,Lemax,Tiger Temper,Jigging/ Bottom,Spinning,"6'6""",BJ,3 - 6 PE,Heavy,350G,Fast,Aeroglass,Normal,Normal,0,0
+393490,Lemax,Tiger Temper,Jigging/ Bottom,Spinning,6',BJ,2 - 5 PE,Heavy,250G,Moderate,Aeroglass,Normal,Normal,0,0
+713510,Penn,23'Slammerr Jig III,Jigging/ Bottom,Spinning,6'3,BJ,4   PE,Heavy,50-200G,Fast,Carbon,Normal,Normal,0,0
+713509,Penn,23'Slammerr Jig III,Jigging/ Bottom,Spinning,6'3,BJ,3   PE,Heavy,20-150G,Fast,Carbon,Normal,Normal,0,0
+713501,Penn,23'Slammerr Jig III,Jigging/ Bottom,Spinning,6',BJ,4   PE,Heavy,50-200,Fast,Carbon,Normal,Normal,0,0
+123137,Relix,Fantasy,Jigging/ Bottom,Spinning,6',BJ,2 - 4 PE,Heavy,24-140G,Slow - Moderate,Graphite,Normal,Normal,0,0
+283679,Relix,NS Capung,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,7-28G,Fast,Carbon,Sea,Normal,12M,0
+843147,Bullzen,Dark Fire,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,20G,Fast,Carbon,Normal,Normal,0,0
+263305,Eupro,X-Fury,Casting,BC,6'3,1PCS,8 - 17 LB,Medium,7-23G,Fast,Graphite,Fuji,Normal,0,0
+283721,Gtech,Luna Snow,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,18-39G,Fast,(Comp),SiC,Normal,0,0
+263454,Eupro,Aggression,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,7-28G,Moderate,Graphite,Normal,Normal,0,0
+713014,Abu Garcia,Gen Ike,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,7-30G,Fast,Graphite,Normal,Normal,0,0
+103223,Seahawk,Predator-X,Casting,BC,6'3,2PCS,8 - 17 LB,Medium,8-20G,Fast,(Comp),Normal,Normal,0,0
+713312,Berkley,17'Basspatrol,Casting,BC,"6'2""",2PCS,6 - 15 LB,Medium,7-22G,Fast,Graphite,Normal,Normal,0,0
+123092,Relix,Pro-fighter,Casting,BC,6',2PCS,6 - 15 LB,Medium,7-18G,Slow - Moderate,Carbon,Fuji,Normal,0,0
+543922,Shimano,FX,Casting,BC,6',2PCS,6 - 15 LB,Medium,7-22G,Fast,Graphite,Normal,Normal,0,0
+103533,Seahawk,Air-Wolf,Casting,BC,6',2PCS,6 - 15 LB,Medium,8-20G,Moderate,Graphite,Normal,Normal,0,0
+103222,Seahawk,Predator-X,Casting,BC,6',2PCS,6 - 15 LB,Medium,7-18G,Fast,(Comp),Normal,Normal,0,0
+103587,Seahawk,Zing-Cast,Casting,BC,6',2PCS,6 - 15 LB,Medium,8-18G,Fast,Graphite,Fuji,Normal,0,0
+103304,Seahawk,Bass Strike,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,7-15G,Moderate,(Comp),Normal,Normal,0,0
+993156,EXP,Triton,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,7-21G,Moderate,(Comp),Normal,Normal,0,0
+863121,Extend,Extend Shark 20',Casting,BC,6',2PCS,6 - 14 LB,Medium Light,0,Slow - Moderate,(Comp),Fuji,Fuji,0,0
+103617,Seahawk,Blazer,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,5-17G,Moderate,(Comp),Normal,Normal,0,0
+283670,Strike2,Spanky,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,5-22G,Moderate,(Comp),Normal,Normal,0,0
+863166,Extend,Extend Shark 12',Casting,BC,6',2PCS,6 - 14 LB,Medium Light,5-15G,Fast,Carbon,Fuji,Fuji,0,0
+103633,Seahawk,Solid Strike,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,7-16G,Moderate,(Comp),Normal,Normal,0,0
+543833,Shimano,Solara,Casting,BC,6',2PCS,6 - 15 LB,Medium,7-22G,Fast,(Comp),Normal,Normal,0,0
+113587,Daiwa,Revros-R,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,6-18G,Fast,Graphite,Fuji,Normal,0,0
+283598,Abu Garcia,Jerker III,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,10-25G,Slow,Carbon,Normal,Normal,0,0
+283573,Abu Garcia,Lure Caster V2,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,8-20G,Fast,Graphite,SiC,Normal,0,0
+393441,Lemax,Star President,Casting,BC,6',2PCS,6 - 12 LB,Medium Light,5-20G,Moderate,Carbon,Fuji,Normal,0,0
+103610,Seahawk,Feather Stik,Casting,BC,6',1PCS,6 - 14 LB,Medium Light,5-18G,Moderate,(Comp),Fuji,Aluminium,0,0
+283720,Gtech,Luna Snow,Casting,BC,6',2PCS,6 - 12 LB,Medium Light,11-22G,Fast,(Comp),SiC,Normal,0,0
+713022,Abu Garcia,Promax 16',Casting,BC,6',2PCS,5 - 12 LB,Medium Light,5-14G,Slow,Graphite,Normal,Normal,0,0
+433086,Kyoda,Dark Water,Casting,BC,6',1PCS,4 - 10 LB,Light,4-14G,Slow,Graphite,SiC,Fuji,0,0
+543805,Shimano,21' Raider,Casting,BC,"5'8""",2PCS,10 - 28 LB,Medium,0,Fast,Graphite,Fuji,Normal,12M,0
+103597,Seahawk,Bass Force,Casting,BC,"5'8""",2PCS,6 - 15 LB,Medium,8-18G,Fast,Graphite,Normal,Normal,0,0
+713003,Abu Garcia,24' Revo2 X,Casting,BC,"5'6""",2PCS,6 - 14 LB,Medium Light,4-15G,Fast,Graphite,Normal,Normal,0,0
+993062,EXP,Ironclad,Casting,BC,6',2PCS,6 - 12 LB,Medium Light,6-20G,Slow - Moderate,Carbon,Normal,Normal,3M,0
+993156,EXP,Triton,Casting,BC,6',2PCS,6 - 14 LB,Medium Light,7-21G,Fast,Graphite,Normal,Normal,3M,0
+103632,Seahawk,Solid Strike,Casting,BC,"5'6""",2PCS,6 - 14 LB,Medium Light,7-16G,Slow,(Comp),Normal,Normal,0,0
+713308,Berkley,24'Fireflex,Casting,BC,"5'6""",2PCS,6 - 14 LB,Medium Light,4-15G,Slow,Carbon,Normal,Normal,0,0
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,   ,0,0,0,0,0,0,0,0
